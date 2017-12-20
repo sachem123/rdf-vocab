@@ -1,0 +1,170 @@
+# 12-may-2016 - jfa - corrected issues found by xturtle
+# 19-apr-2016 - kpu - remove references to dsM3/M2/M1/M0
+
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+
+@prefix dskern:    <http://www.3ds.com/RDF/Corpus/Kernel/> .
+@prefix dsmf:      <http://www.3ds.com/RDF/RJS/ModuleFunction/> .
+
+# ----- ModelView vocabulary -----
+
+# Declaring this in dskern.ttl to support cacheing
+#dskern:Mask a rdfs:Class ;
+#    rdfs:label "ModelView Mask" ;
+#    rdfs:comment "class of Masks"@en .
+
+dskern:Property a rdfs:Class ;
+    rdfs:subClassOf dskern:Required.property.RdfProperty ;
+    rdfs:label "ModelView Property" ;
+    rdfs:comment "class of custom Properties"@en .
+
+dskern:Option a rdfs:Class ;
+    rdfs:subClassOf dskern:Required.property.SignatureOption ;
+    rdfs:label "ModelView Option" ;
+    rdfs:comment "class of custom Options"@en .
+
+dskern:mask a owl:FunctionalProperty ;
+    rdfs:label "ModelView Mask" ;
+    rdfs:comment "mask to use for the serialization of the property or function result"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (dskern:PredefinedProcedure rdf:Property dskern:Property) ] ;
+    rdfs:range dskern:Mask .
+
+dskern:defaultMask a owl:FunctionalProperty , owl:AnnotationProperty ;
+    rdfs:comment "Default mask to use when none is provided"@en ;
+    rdfs:domain rdfs:Class ;
+    rdfs:range dskern:Mask .
+
+dskern:property a rdf:Property ;
+    rdfs:label "ModelView Property" ;
+    rdfs:comment "property in the JSON serialization"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (dskern:Mask dskern:Property) ] ;
+    rdfs:range [ a owl:Class ; owl:unionOf (rdf:Property dskern:Property) ] ;
+    dskern:mask dskern:Mask.Property ;
+    dskern:key "property"^^xsd:string .
+
+dskern:option a rdf:Property ;
+    rdfs:label "ModelView Option" ;
+    rdfs:comment "options as property in the JSON serialization"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (dskern:Mask dskern:Option) ] ;
+    rdfs:range [ a owl:Class ; owl:unionOf (dskern:SignatureOption dskern:SignatureOptionWithValue dskern:Option) ] ;
+    dskern:key "option"^^xsd:string .
+
+dskern:option.ADD a rdf:Property ;
+    rdfs:subPropertyOf dskern:option ;
+    rdfs:label "ModelView Option for ADD Command" .
+
+dskern:option.CLONE a rdf:Property ;
+    rdfs:subPropertyOf dskern:option ;
+    rdfs:label "ModelView Option for CLONE Command" .
+
+dskern:option.MODIFY a rdf:Property ;
+    rdfs:subPropertyOf dskern:option ;
+    rdfs:label "ModelView Option for MODIFY Command" .
+
+dskern:option.DELETE a rdf:Property ;
+    rdfs:subPropertyOf dskern:option ;
+    rdfs:label "ModelView Option for DELETE Command" .
+
+dskern:key a owl:FunctionalProperty ;
+    rdfs:label "Property key" ;
+    rdfs:comment "property name in the JSON serialization"@en ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (rdf:Property dskern:Property dskern:SignatureOption dskern:SignatureOptionWithValue dskern:Option) ] ;
+    rdfs:range xsd:string .
+
+dskern:uiModule a owl:FunctionalProperty ;
+    rdfs:label "UI Module" ;
+    rdfs:comment "UI Module to override form-based UI default behavior" ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (rdf:Property dskern:Property rdfs:Class rdfs:Datatype) ] ;
+    rdfs:range xsd:string .
+
+dskern:compact a owl:FunctionalProperty ;
+    rdfs:label "Compact" ;
+    rdfs:comment "Should the property object be in its compact form" ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (rdf:Property dskern:Property dskern:SignatureOption dskern:SignatureOptionWithValue dskern:Option) ] ;
+    rdfs:range xsd:boolean .
+
+dskern:expanded a owl:FunctionalProperty ;
+    rdfs:label "Expanded" ;
+    rdfs:comment "Should the items of the collection be listed" ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (rdf:Property dskern:Property) ] ;
+    rdfs:range xsd:boolean .
+
+dskern:rangeFilter a owl:FunctionalProperty ;
+    rdfs:label "Range filter" ;
+    rdfs:comment "SPARQL filter to query the possible values (overrides rdfs:range and dskern:rangeMemberRange)" ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (rdf:Property dskern:Property) ] ;
+#    rdfs:range dskern:sparql .
+    rdfs:range xsd:string .
+
+dskern:sparql a rdfs:Datatype ;
+    xsd:pattern "^[\\?$]([A-Za-z\\x{00C0}-\\x{00D6}\\x{00D8}-\\x{00F6}\\x{00F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}-\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFD}_0-9][A-Za-z\\x{00C0}-\\x{00D6}\\x{00D8}-\\x{00F6}\\x{00F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}-\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFD}_0-9\\x{00B7}\\x{0300}-\\x{036F}\\x{203F}-\\x{2040}]+)\\s+(?:WHERE|where)\\s+{(?:.*\\s)?[\\?$]\\1(?:\\s.*)?}$" .
+
+dskern:Required.property.RdfProperty a owl:Restriction ;
+    owl:onProperty dskern:property ;
+    owl:someValuesFrom rdf:Property ;
+    .
+
+dskern:Required.property.SignatureOption a owl:Restriction ;
+    owl:onProperty dskern:option ;
+    owl:someValuesFrom [ a owl:Class ; owl:unionOf (dskern:SignatureOption dskern:SignatureOptionWithValue) ] ;
+    .
+
+xsd:boolean dskern:uiModule "DS/RDFDesktop/Views/Inputs/Toggle" .
+xsd:string dskern:uiModule "DS/RDFDesktop/Views/Inputs/Text" .
+rdfs:Literal dskern:uiModule "DS/RDFDesktop/Views/Inputs/Text" .
+rdf:List dskern:uiModule "DS/RDFDesktop/Views/Inputs/TableSelect" .
+rdf:Seq dskern:uiModule "DS/RDFDesktop/Views/Inputs/TableSelect" .
+rdf:Alt dskern:uiModule "DS/RDFDesktop/Views/Inputs/TableSelect" .
+rdf:Bag dskern:uiModule "DS/RDFDesktop/Views/Inputs/TableSelect" .
+rdfs:Container dskern:uiModule "DS/RDFDesktop/Views/Inputs/TableSelect" .
+
+dskern:label a owl:FunctionalProperty ;
+    rdfs:subPropertyOf rdfs:label ;
+    rdfs:comment "A functional label"@en ;
+    rdfs:label "Title"@en ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:string ;
+    dskern:key "title"^^xsd:string ;
+    .
+dskern:comment a owl:FunctionalProperty ;
+    rdfs:subPropertyOf rdfs:comment ;
+    rdfs:comment "A functional comment. Used in UI for properties"@en ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:string ;
+    dskern:key "subtitle"^^xsd:string ;
+    .
+dskern:image a owl:FunctionalProperty ;
+    rdfs:comment "The image that depicts the subject"@en ;
+    rdfs:domain rdfs:Resource ;
+    dskern:key "image"^^xsd:string ;
+    dskern:compact "true"^^xsd:boolean ;
+    dskern:uiModule "DS/RDFDesktop/Views/Inputs/Text" ;
+    dskern:label "Image" ;
+    dskern:comment "Picture" ;
+    .
+
+# ----- Default Mask -----
+
+dskern:Mask.Default a dskern:Mask ;
+    dskern:property dskern:label ,
+    dskern:image  .
+
+rdfs:Resource dskern:defaultMask dskern:Mask.Default .
+
+dskern:Mask.Bounded a dskern:Mask ;
+    .
+# ----- Mask for Masks -----
+
+dskern:Mask.Mask a dskern:Mask ;
+    dskern:property dskern:property .
+
+# These computed properties are defined in modelView.rjs
+dskern:Mask.Property a dskern:Mask ;
+    dskern:property dsmf:core.policies.modelView.propertyKey ,
+        dsmf:core.policies.modelView.propertyTitle ,
+        dsmf:core.policies.modelView.propertyDescription ,
+        dsmf:core.policies.modelView.propertyUIModule ,
+        dsmf:core.policies.modelView.propertyUIOptions .

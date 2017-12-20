@@ -1,0 +1,2129 @@
+# This is the kernel vocabulary
+# 26-may-2017 - jfa - command, method, signature, and autoNamer no longer dskern:Sparse
+# 24-may-2017 - hny - remove old LOAD, SHARE, REFRESH
+# 20-jan-2017 - t3s - add blacklist cache and increase module cache size
+# 11-aug-2016 - gty - add dskern:Role
+# 12-may-2016 - jfa - corrected issues found by xturtle
+# 09-may-2016 - jfa - Fixed some typos. Corrected status enum.
+# 05-may-2016 - kpu - Securing signature & admin cache definitions
+# 25-apr-2016 - hny - Log for Synchronisation Services
+# 19-apr-2016 - kpu - remove references to dsM3/M2/M1/M0
+# 16-apr-2016 - jfa - redesigned methods
+# 15-apr-2016 - i2m - moved trigger objects to triggers.ttl
+# 30-mar-2016 - hny - Entailment rules in owl terms
+# 30-mar-2016 - i2m - add trigger related objects
+# 23-mar-2016 - hny - enforce Function required.signature
+# 23-mar-2016 - hny - dskern:Console is a Resource (and not a Class), upgrade many command from Class to Resource
+# 22-mar-2016 - hny - new property functions
+# 22-mar-2016 - kpu - schema for admin cache
+# 18-mar-2016 - hny - dskern:implements removal in case of Functions (in-progress proposal for Methods)
+# 12-mar-2016 - o1d - modelview data for security context related properties
+# 29-feb-2016 - hny - review incorrect subClassOf owl:FunctionalProperty + dskern:subGraphOf
+# 01-mar-2016 - i2m - added patch errors
+# 23-feb-2016 - o1d - added computed property classes
+# 17-feb-2016 - hny - change defaultAutoname location (archi client/server)
+# 01-feb-2016 - jfa - added multi tenant support
+# 08-jan-2016 - jfa - added subtype IndexGraph
+# 22-nov-2015 - i2m - introduction of push/pop commands
+# 13-nov-2015 - kpu - added AdminCache definition
+# 02-nov-2015 - jfa - added subtypes AdminGraph and DataGraph
+# 30-oct-2015 - jfa - added AdminOnly access rule and added dskern:Enum.ErrorType
+# 06-oct-2015 - kpu - error management definition
+# 06-oct-2015 - i2m - specific GET implementation
+# 25-sep-2015 - gty - add Lock command
+# 11-sep-2015 - o1d - fix security context and related properties
+# 08-sep-2015 - t3s - Updated impl and method modeling
+# 08-sep-2015 - jfa - added graphStatus
+# 03-sep-2015 - i2m - added GET command as an alias for PRINT
+# 01-sep-2015 - kpu - seperate signature impl for different commands from definition
+# 15-aug-2015 - t3s - changed domain of signature; added module / method-related
+# 11-aug-2015 - gty - make command and method instances of dskern:Sparse
+# 04-aug-2015 - jfa - added dskern:Sparse
+# 30-jul-2015 - kpu - more decorations to signature
+# 27-jul-2015 - jfa - modified class hierarchy
+# 20-jul-2015 - kpu - more decorations to signature
+# 20-jul-2015 - jfa - added named graph support
+# 14-jul-2015 - t3s - function model change: dskern:Implementation
+# 06-jul-2015 - i2m - added WITH GRAPH token to help
+# 15-jun-2015 - kpu - import/export signatures
+# 05-jun-2015 - kpu - add Signatures for commands & methods
+# 02-jun-2015 - i2m - dskern:CompositionProperty is now inverse functional
+# 12-may-2015 - gty - add PropertyFunction/FilterFunction
+# 20-apr-2015 - i2m - add insert,modify,remove commands
+# 15-apr-2015 - gty - move Relationship to expansion policy
+# 14-apr-2015 - jfa - changed range on dskern:arguments to xsd:string, cleaned up dspol:Relationship
+# 08-apr-2015 - i2m - dskern:inverseCommand replace dskern:reverseInheritance
+# 24-mar-2015 - i2m - added dskern:reverseInheritance
+# 19-feb-2015 - jfa - add vocabulary for change log
+# 18-feb-2015 - t3s - a) change javaBody to impl; b) make it a URI not a literal
+# 10-feb-2015 - gty - default access rules
+# 09-feb-2015 - kpu - Autonamers
+# 02-feb-2015 - gty - pass password
+# 26-jan-2015 - gty - use Alt/Bag for security
+# 18-jan-2015 - gty - add grammar for security model
+# 23-dec-2014 - i2m - implemented dskern:command.XXX syntax
+# 08-dec-2014 - i2m - replaced dskern:required with owl:Restriction syntax
+# 18-oct-2014 - gty - repackaged from John's ontology
+
+# RDF Related
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfg:    <http://www.w3.org/2004/03/trix/rdfg-1/> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+
+# P&O Using Passport & foaf
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+
+# dataset commands
+@prefix cmdD: <java:com.dassault_systemes.rdfplatform.commands.dataset.> .
+@prefix cmd: <java:com.dassault_systemes.rdfplatform.commands.> .
+
+# Names spaces for the Corpus
+@prefix dskern:  <http://www.3ds.com/RDF/Corpus/Kernel/> .
+
+dskern: a owl:Ontology ;
+    rdfs:label "Vocabulary for the 3DEXPERIENCE PLATFORM RDF Kernel Corpus"@en ;
+    rdfs:comment "Dassault Systemes RDF kernel vocabulary, described using W3C RDF Schema and the Web Ontology Language."@en ;
+    dskern:fragment "dskern-cmds"  , "dskern-errors" , "policies" , "triggers" , "pGraph" , "modelView" , "blacklist", "constituency" ;
+    .
+
+### Entailment rules in owl terms
+
+dskern:TransitiveClosure a rdfs:Class ;
+    rdfs:subClassOf owl:TransitiveProperty, owl:ReflexiveProperty ;
+    .
+rdfs:subClassOf a dskern:TransitiveClosure .
+rdfs:subPropertyOf a dskern:TransitiveClosure .
+
+#################################################################
+#
+#   M3 Corpus
+#
+#################################################################
+
+### Classes
+dskern:Sparse a rdfs:Class ;
+    rdfs:label "Sparse Entailment"@en ;
+    rdfs:comment "Subclasses of this class will participate in sparse entailment."@en ;
+    .
+dskern:FunctionalNLSProperty a rdfs:Class ;
+    rdfs:subClassOf rdf:Property ;
+    rdfs:label "Functional NLS Property"@en ;
+    rdfs:comment "Properties that are Subclasses of this class can only have one value by language tag"@en ;
+    .
+dskern:Attribute a rdfs:Class ;
+    rdfs:subClassOf owl:FunctionalProperty ;
+    rdfs:subClassOf dskern:Sparse ;
+    rdfs:label "Functional Property"@en ;
+    rdfs:comment "The class of Kernel functional properties which will be entailed"@en ;
+    .
+dskern:CompositionProperty a rdfs:Class ;
+    rdfs:subClassOf owl:InverseFunctionalProperty ;
+    rdfs:label "Composition Property"@en ;
+    rdfs:comment "The class of Kernel composition properties"@en ;
+    .
+dskern:LocalProperty a rdfs:Class ;
+    rdfs:label "Local Property"@en ;
+    rdfs:comment "The class of Kernel local properties"@en ;
+    .
+dskern:InverseCompositionProperty a rdfs:Class, owl:Class ;
+    rdfs:subClassOf owl:FunctionalProperty ;
+	owl:disjointWith [
+		a owl:Class; 
+		owl:oneOf ( dskern:CompositionProperty ) 
+	] ;
+    rdfs:label "Inverse Composition Property"@en ;
+    rdfs:comment "The class of Kernel inverse composition properties"@en ;
+    .
+dskern:AnnotationProperty a rdfs:Class;
+    rdfs:label "Annotation Property"@en ;
+    rdfs:comment "The class of Kernel annotation properties"@en ;
+	.
+dskern:annotate a rdf:Property, 
+			dskern:InverseCompositionProperty,
+			dskern:AnnotationProperty ;
+    rdfs:label "annotate"@en ;
+    rdfs:comment "an annotation for an object"@en ;
+	.
+### Properties
+dskern:method a owl:AnnotationProperty ;
+    rdfs:label "method"@en ;
+    rdfs:comment "a method on a class or prototype"@en ;
+    rdfs:range dskern:Implementation ;
+    .
+dskern:command a owl:AnnotationProperty;
+    rdfs:label "command"@en ;
+    rdfs:comment "a command on a class or prototype"@en ;
+    rdfs:domain rdfs:Class ;
+    rdfs:range dskern:Function ;
+    .
+dskern:api a owl:FunctionalProperty ;
+    rdfs:domain rdf:Property ;
+    rdfs:range dskern:PredefinedProcedure ;
+    .
+dskern:isDefinedBy a owl:FunctionalProperty ;
+	rdfs:subPropertyOf rdfs:isDefinedBy ;
+    rdfs:range rdfs:Resource ;
+    .
+dskern:disjointWith a rdf:Property ;
+    rdfs:label "disjointWith" ;
+    rdfs:comment "The property that determines that two given classes are disjoint." ;
+    rdfs:domain rdfs:Class ;
+    rdfs:range rdfs:Class ;
+	. 
+# Property to give the name of a term (in a vocabulary) or the name of an individual.
+# Is equivalent to rdfs:label but it supports multi language translations.
+dskern:nlsLabel a rdf:Property, dskern:FunctionalNLSProperty ;
+	rdfs:range rdf:langString ;
+	.
+# Property to give a description of a term (in a vocabulary) or the description of an individual.
+# Is equivalent to rdfs:comment but it supports multi language translations.
+dskern:nlsComment a rdf:Property, dskern:FunctionalNLSProperty ;
+	rdfs:range rdf:langString ;
+	.
+### Attributes
+dskern:commandOverride a rdf:Property ;
+    rdfs:range xsd:boolean ;
+    .
+dskern:status a dskern:Attribute ;
+    rdfs:label "Status"@en ;
+    rdfs:comment "Status of the given subject"@en ;
+    rdfs:range xsd:string ;
+    .
+dskern:Enum.graphStatus a owl:Restriction ;
+    owl:onProperty dskern:status ;
+    owl:allValuesFrom [a rdfs:Datatype; owl:oneOf ("Online"^^xsd:string "Offline"^^xsd:string)] ;
+    .
+dskern:seqNumber a dskern:Attribute ;
+    rdfs:label "Sequence Number"@en ;
+    rdfs:comment "Sequence number of the given subject"@en ;
+    rdfs:range xsd:integer ;
+    .
+dskern:domainMemberRange a rdf:Property ;
+    rdfs:label "domainMember"@en ;
+    rdfs:comment "A range of the members in the subject property domain container or collection."@en ;
+    rdfs:range rdfs:Class ;
+    rdfs:domain rdf:Property ;
+    .
+dskern:rangeMemberRange a rdf:Property ;
+    rdfs:label "rangeMember"@en ;
+    rdfs:comment "A range of the members in the subject property range container or collection."@en ;
+    rdfs:range rdfs:Class ;
+    rdfs:domain rdf:Property ;
+    .
+### MultiTenancy Support
+dskern:TenantAdd a dskern:Function ;
+    rdfs:label "TenantAdd"@en ;
+	rdfs:comment "Add tenant in global admin graph."@en ;
+    dskern:implementation cmdD:TenantAdd ;
+    .
+cmdD:TenantAdd a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:TenantDelete a dskern:Function ;
+    rdfs:label "TenantDelete"@en ;
+	rdfs:comment "Delete tenant in global admin graph."@en ;
+    dskern:implementation cmdD:TenantDelete ;
+    .
+cmdD:TenantDelete a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:TenantModify a dskern:Function ;
+    rdfs:label "TenantModify"@en ;
+	rdfs:comment "Modify tenant in global admin graph."@en ;
+    dskern:implementation cmdD:TenantModify ;
+    .
+cmdD:TenantModify a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Tenant a rdfs:Class ;
+    rdfs:subClassOf dskern:Securable ;
+    dskern:commandOverride "true"^^xsd:boolean ;
+    dskern:command.ADD dskern:TenantAdd ;
+    dskern:command.DELETE dskern:TenantDelete ;
+    dskern:command.MODIFY dskern:TenantModify ;
+    rdfs:label "Tenant"@en ;
+    rdfs:comment "The Tenant concept."@en ;
+    .
+dskern:belongsToTenant a dskern:Attribute ;
+    rdfs:comment "Associates a local graph with its tenant."@en ;
+    rdfs:domain dskern:Graph ;
+    rdfs:range dskern:Tenant ;
+    .
+dskern:tenants a dskern:Attribute ;
+    rdfs:comment "Associates a user with a collection of tenants."@en ;
+    rdfs:domain foaf:Person ;
+    rdfs:range rdf:Alt ;
+    dskern:rangeMemberRange dskern:Tenant ;
+    .
+dskern:preferredGraph a dskern:Attribute ;
+    rdfs:comment "Associates a tenant with a preferred active graph."@en ;
+    rdfs:domain dskern:Tenant ;
+    rdfs:range dskern:Graph ;
+    .
+dskern:Graph.global.data a dskern:DataGraph ;
+    .
+dskern:Tenant.global a dskern:Tenant ;
+    rdfs:label "Global Tenant"@en ;
+    rdfs:comment "The global tenant."@en ;
+    dskern:owner dskern:Person.GlobalCreator ;
+    dskern:preferredGraph dskern:Graph.global.data ;
+    .
+dskern:Graph.tenant1.data a dskern:DataGraph ;
+    .
+dskern:Tenant.tenant1 a dskern:Tenant ;
+    rdfs:label "Local Tenant 1"@en ;
+    rdfs:comment "The first local tenant."@en ;
+    dskern:owner dskern:Person.GlobalCreator ;
+    dskern:preferredGraph dskern:Graph.tenant1.data ;
+    .
+### MultiGraph Support
+dskern:Cluster a rdfs:Class ;
+    rdfs:subClassOf dskern:Securable ;
+    rdfs:label "Cluster"@en ;
+    rdfs:comment "Represents a cluster of graphs."@en ;
+    .
+dskern:cluster a dskern:Attribute ;
+    rdfs:comment "Associates a graph with a cluster."@en ;
+    rdfs:domain dskern:Graph ;
+    rdfs:range dskern:Cluster ;
+    .
+dskern:Cluster.global a dskern:Cluster ;
+    rdfs:label "Global Cluster"@en ;
+    rdfs:comment "The global cluster of graphs."@en ;
+    dskern:owner dskern:Person.GlobalCreator ;
+    .
+dskern:Cluster.tenant1 a dskern:Cluster ;
+    rdfs:label "Local Tenant 1 Cluster"@en ;
+    rdfs:comment "The tenant1 cluster of graphs."@en ;
+    dskern:owner dskern:Person.GlobalCreator ;
+    .
+dskern:GraphAdd a dskern:Function ;
+    rdfs:label "GraphAdd"@en ;
+	rdfs:comment "Add graph and register in catalog."@en ;
+    dskern:implementation cmdD:GraphAdd ;
+    .
+cmdD:GraphAdd a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:GraphDelete a dskern:Function ;
+    rdfs:label "GraphDelete"@en ;
+	rdfs:comment "Delete graph and unregister from catalog."@en ;
+    dskern:implementation cmdD:GraphDelete ;
+    .
+cmdD:GraphDelete a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:GraphModify a dskern:Function ;
+    rdfs:label "GraphModify"@en ;
+	rdfs:comment "Modify graph meta data in catalog."@en ;
+    dskern:implementation cmdD:GraphModify ;
+    .
+cmdD:GraphModify a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:subGraphOf a owl:FunctionalProperty ;
+	rdfs:subPropertyOf rdfg:subGraphOf ;
+    rdfs:range dskern:Graph ;
+    .
+dskern:Graph a rdfs:Class ;
+	rdfs:subClassOf rdfg:Graph, dskern:Securable, dskern:Enum.graphStatus ;
+    rdfs:label "Graph"@en ;
+	rdfs:comment "Graphs that hold facts."@en ;
+    dskern:commandOverride "true"^^xsd:boolean ;
+    dskern:command.ADD dskern:GraphAdd ;
+    dskern:command.DELETE dskern:GraphDelete ;
+    dskern:command.MODIFY dskern:GraphModify ;
+    dskern:status "Online"^^xsd:string ;
+    dskern:seqNumber "0"^^xsd:integer ;
+    .
+dskern:IndexGraph a rdfs:Class ;
+	rdfs:subClassOf dskern:Graph ;
+    rdfs:label "Index Graph"@en ;
+	rdfs:comment "Graphs that hold indexes."@en ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicRead ;
+    .
+dskern:AdminGraph a rdfs:Class ;
+	rdfs:subClassOf dskern:Graph ;
+    rdfs:label "Admin Graph"@en ;
+	rdfs:comment "Graphs that hold schema facts."@en ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicRead ;
+    .
+dskern:DataGraph a rdfs:Class ;
+	rdfs:subClassOf dskern:Graph ;
+    rdfs:label "Data Graph"@en ;
+	rdfs:comment "Graphs that hold instance facts."@en ;
+    .
+dskern:ShapesGraph a rdfs:Class ;
+	rdfs:subClassOf dskern:Graph ;
+    rdfs:label "Shapes Graph"@en ;
+	rdfs:comment "Graphs that hold shapes."@en ;
+    .
+### Class/Interface
+dskern:Prototype a rdfs:Class ;
+    rdfs:label "Prototype"@en ;
+    rdfs:comment "Individuals of this class can be used as prototypes"@en ;
+    .
+dskern:Policy a rdfs:Class ;
+    rdfs:subClassOf rdfs:Class ;
+    rdfs:label "Interface"@en ;
+    rdfs:comment "Interface that can be instantiated"@en ;
+    .
+### Functions
+dskern:PredefinedProcedure a rdfs:Class ;
+    rdfs:subClassOf dskern:Securable , dskern:Required.signature , dskern:Min1.signature ;
+    rdfs:label "API"@en ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicInvoke ;
+    .
+dskern:Function a rdfs:Class ;
+	rdfs:subClassOf dskern:PredefinedProcedure , dskern:Required.implementation , dskern:Min1.implementation ;
+    rdfs:label "Function"@en ;
+    .
+dskern:Required.signature a owl:Restriction ;
+    owl:onProperty dskern:signature ;
+    owl:allValuesFrom dskern:Signature ;
+    .
+dskern:Min1.signature a owl:Restriction ;
+    owl:onProperty dskern:signature ;
+    owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+    .
+dskern:Required.implementation a owl:Restriction ;
+    owl:onProperty dskern:implementation ;
+    owl:allValuesFrom dskern:Implementation ;
+    .
+dskern:Min1.implementation a owl:Restriction ;
+    owl:onProperty dskern:implementation ;
+    owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+    .
+dskern:implementation a owl:FunctionalProperty , owl:InverseFunctionalProperty ;
+    rdfs:domain dskern:PredefinedProcedure ;
+    rdfs:range dskern:Implementation ;
+    .
+dskern:jsLabel a owl:FunctionalProperty ;
+    rdfs:domain dskern:PredefinedProcedure ;
+    rdfs:range xsd:string ;
+    .
+dskern:webInvokable a owl:FunctionalProperty ;
+    rdfs:domain dskern:PredefinedProcedure ;
+    rdfs:range xsd:boolean ;
+    .
+dskern:retryOnUpdateConflict a owl:FunctionalProperty ;
+    rdfs:domain dskern:PredefinedProcedure ;
+    rdfs:range xsd:boolean ;
+    .
+# Masks
+dskern:Mask a rdfs:Class ;
+    rdfs:subClassOf dskern:Securable ;
+    rdfs:label "ModelView Mask" ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicConnect ;
+    rdfs:comment "class of Masks"@en 
+	.
+# Declare if JS runtime should persist until the PdP and any async ops it launches are completen
+dskern:keepAlive a owl:FunctionalProperty ;
+    rdfs:domain dskern:PredefinedProcedure ;
+    rdfs:range xsd:boolean ;
+    .
+# TODO: associate INVOKE command with methods
+dskern:Function dskern:command.INVOKE dskern:Invoke ;
+    .
+# TODO: check if the following two properties can be removed
+dskern:token a rdf:Property ;
+    .
+dskern:override a rdf:Property ;
+    .
+
+### Command Definitions
+dskern:Add a dskern:Function ;
+    rdfs:label "Add" ;
+	rdfs:comment "Add instances & resources to data"@en ;
+    dskern:implementation cmdD:Add ;
+    .
+cmdD:Add a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Clone a dskern:Function ;
+    rdfs:label "Clone" ;
+	rdfs:comment "Clone a resources or instances"@en ;
+    dskern:implementation cmdD:Clone ;
+    .
+cmdD:Clone a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Delete a dskern:Function ;
+    rdfs:label "Delete" ;
+	rdfs:comment "Delete resources from data"@en ;
+    dskern:implementation cmdD:Delete ;
+    .
+cmdD:Delete a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Get a dskern:Function ;
+    rdfs:label "Get" ;
+	rdfs:comment "Get details of a resource"@en ;
+    dskern:implementation cmdD:Get ;
+    .
+cmdD:Get a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Lock a dskern:Function ;
+    rdfs:label "Lock" ;
+	rdfs:comment "Aquire lock on resource"@en ;
+    dskern:implementation cmdD:Lock ;
+    .
+cmdD:Lock a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Modify a dskern:Function ;
+    rdfs:label "Modify" ;
+	rdfs:comment "Modify resources in data"@en ;
+    dskern:implementation cmdD:Modify ;
+    .
+cmdD:Modify a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Move a dskern:Function ;
+    rdfs:label "Move" ;
+	rdfs:comment "Move data between graphs"@en ;
+    dskern:implementation cmdD:Move ;
+    .
+cmdD:Move a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Print a dskern:Function ;
+    rdfs:label "Print" ;
+	rdfs:comment "Print details of resources in data"@en ;
+    dskern:implementation cmdD:Print ;
+    .
+cmdD:Print a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Remove a dskern:Function ;
+    rdfs:label "Remove" ;
+	rdfs:comment "Remove instances & resources from data"@en ;
+    dskern:implementation cmdD:Remove ;
+    .
+cmdD:Remove a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:ExpandTriple a dskern:Function ;
+    rdfs:label  "ExpandTriple" ;
+	rdfs:comment "Expand a triple with specific relationships in path & other details"@en ;
+    dskern:implementation  cmdD:ExpandTriple ;
+    .
+cmdD:ExpandTriple a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:DeleteTriple a dskern:Function ;
+    rdfs:label "DeleteTriple" ;
+	rdfs:comment "Delete triples from data"@en ;
+    dskern:implementation cmdD:Deletetriple ;
+    .
+cmdD:Deletetriple a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:InsertTriple a dskern:Function ;
+    rdfs:label "InsertTriple" ;
+	rdfs:comment "Insert triples into data"@en ;
+    dskern:implementation cmdD:Inserttriple ;
+    .
+cmdD:Inserttriple a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+### command on class
+dskern:inverseCommand a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:label "inverseCommand"@en ;
+    rdfs:comment "indicate that command stack needs to be processed in reverse"@en .
+
+dskern:command.ADD a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+rdfs:Class dskern:command.ADD dskern:Add ;
+    .
+### command on resource
+dskern:command.CLONE a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.DELETE a rdf:Property ;
+	rdfs:subPropertyOf dskern:inverseCommand ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.GET a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.LOCK a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.MODIFY a rdf:Property ;
+	rdfs:subPropertyOf dskern:inverseCommand ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.MOVE a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.PRINT a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.EXPANDTRIPLE a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.DELETETRIPLE a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.INSERTTRIPLE a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+rdfs:Resource dskern:command.CLONE dskern:Clone ;
+    dskern:command.DELETE dskern:Delete ;
+    dskern:command.GET dskern:Get ;
+    dskern:command.LOCK dskern:Lock ;
+    dskern:command.MODIFY dskern:Modify ;
+    dskern:command.MOVE dskern:Move ;
+    dskern:command.PRINT dskern:Print ;
+    dskern:command.REMOVE dskern:Remove ;
+    dskern:command.EXPANDTRIPLE dskern:ExpandTriple ;
+    dskern:command.DELETETRIPLE dskern:DeleteTriple ;
+    dskern:command.INSERTTRIPLE dskern:InsertTriple ;
+    .
+### complex object commands
+dskern:command.INSERT a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.REMOVE a rdf:Property ;
+	rdfs:subPropertyOf dskern:inverseCommand ;
+    rdfs:range dskern:Function ;
+    .
+### commands on alt, bag, seq (container)
+dskern:InsertIntoContainer a dskern:Function ;
+    rdfs:label "Insert" ;
+	rdfs:comment "Insert elements into any rdfs:Container "@en ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.commands.containers.Insert> ;
+    .
+<java:com.dassault_systemes.rdfplatform.commands.containers.Insert> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:ModifyContainer a dskern:Function ;
+    rdfs:label "Modify" ;
+	rdfs:comment "Modify elements in any rdfs:Container "@en ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.commands.containers.Modify> ;
+    .
+<java:com.dassault_systemes.rdfplatform.commands.containers.Modify> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:RemoveFromContainer a dskern:Function ;
+    rdfs:label "Remove" ;
+	rdfs:comment "Remove elements from any rdfs:Container "@en ;
+    dskern:implementation    <java:com.dassault_systemes.rdfplatform.commands.containers.Remove> ;
+    .
+<java:com.dassault_systemes.rdfplatform.commands.containers.Remove> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+rdfs:Container dskern:command.INSERT dskern:InsertIntoContainer ;
+    dskern:command.MODIFY dskern:ModifyContainer ;
+    dskern:command.REMOVE dskern:RemoveFromContainer ;
+    .
+### commands on list (collection)
+dskern:InsertIntoList a dskern:Function ;
+    rdfs:label "Insert" ;
+	rdfs:comment "Insert elements from any rdf:List "@en ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.commands.list.Insert> ;
+    .
+<java:com.dassault_systemes.rdfplatform.commands.list.Insert> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:ModifyList a dskern:Function ;
+    rdfs:label "Modify" ;
+	rdfs:comment "Modify elements from any rdf:List "@en ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.commands.list.Modify> ;
+    .
+<java:com.dassault_systemes.rdfplatform.commands.list.Modify> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:RemoveFromList a dskern:Function ;
+    rdfs:label "Remove" ;
+	rdfs:comment "Remove elements from any rdf:List "@en ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.commands.list.Remove> ;
+    .
+<java:com.dassault_systemes.rdfplatform.commands.list.Remove> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+rdf:List dskern:command.INSERT dskern:InsertIntoList ;
+    dskern:command.MODIFY dskern:ModifyList ;
+    dskern:command.REMOVE dskern:RemoveFromList ;
+    .
+### Console commands
+dskern:command.ABORT a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.COMMIT a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.START a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.BASELINE a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.COUNT a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.HELP a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.LIST a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+rdfs:Resource dskern:command.LIST dskern:List ;
+    .
+dskern:command.INVOKE a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.PATCH a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.POP a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.PUSH a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.RUN a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.ECHO a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.SET a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.UNSET a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.SHOW a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.VALIDATE a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.IMPORT a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.EXPORT a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.DEPLOY a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.UNDEPLOY a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.GETRJS a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.FLUSHCACHE a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.ENTAIL a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    rdfs:range dskern:Function ;
+    .
+dskern:command.SELECT a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    .
+dskern:command.SPARQL a rdf:Property ;
+	rdfs:subPropertyOf dskern:command ;
+    .
+dskern:Abort a dskern:Function ;
+    rdfs:label "AbortTransaction" ;
+	rdfs:comment "Abort a transaction"@en ;
+    dskern:implementation cmd:Abort ;
+    .
+cmd:Abort a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Commit a dskern:Function ;
+    rdfs:label "CommitTransaction" ;
+	rdfs:comment "Commit a transaction"@en ;
+    dskern:implementation cmd:Commit ;
+    .
+cmd:Commit a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Start a dskern:Function ;
+    rdfs:label "StartTransaction" ;
+	rdfs:comment "Start a transaction"@en ;
+    dskern:implementation cmd:Start ;
+    .
+cmd:Start a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Baseline a dskern:Function ;
+    rdfs:label "Baseline" ;
+	rdfs:comment "Start a baseline index"@en ;
+    dskern:implementation cmd:Baseline ;
+    .
+cmd:Baseline a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Count a dskern:Function ;
+    rdfs:label "Count" ;
+	rdfs:comment "Count number of triples"@en ;
+    dskern:implementation cmd:Count ;
+    .
+cmd:Count a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Help a dskern:Function ;
+    rdfs:label "Help" ;
+	rdfs:comment "Help on commands, functions or resources"@en ;
+    dskern:implementation cmd:Help ;
+    .
+cmd:Help a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Import a dskern:Function ;
+    rdfs:label "Import" ;
+	rdfs:comment "Import a turtle file"@en ;
+    dskern:implementation cmd:Import ;
+    .
+cmd:Import a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:List a dskern:Function ;
+    rdfs:label "List" ;
+	rdfs:comment "List graphs, prefixes, vocabularies, or resouces"@en ;
+    dskern:implementation cmd:List ;
+    .
+cmd:List a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Invoke a dskern:Function ;
+    rdfs:label "Invoke" ;
+	rdfs:comment "Invoke a dskern:Function"@en ;
+    dskern:implementation cmd:Invoke ;
+    .
+cmd:Invoke a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Pop a dskern:Function ;
+    rdfs:label "Pop" ;
+	rdfs:comment "Recover saved context settings"@en ;
+    dskern:implementation cmd:Pop ;
+    .
+cmd:Pop a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Push a dskern:Function ;
+    rdfs:label "Push" ;
+	rdfs:comment "Save off context settings"@en ;
+    dskern:implementation cmd:Push ;
+    .
+cmd:Push a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Run a dskern:Function ;
+    rdfs:label "Run" ;
+	rdfs:comment "Run an rql file"@en ;
+    dskern:implementation cmd:Run ;
+    .
+cmd:Run a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Echo a dskern:Function ;
+    rdfs:label "Echo" ;
+	rdfs:comment "Echo a string"@en ;
+    dskern:implementation cmd:Echo ;
+    .
+cmd:Echo a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Set a dskern:Function ;
+    rdfs:label "Set" ;
+	rdfs:comment "Set the context, or set a prefix on session or graph"@en ;
+    dskern:implementation cmd:Set ;
+    .
+cmd:Set a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Unset a dskern:Function ;
+    rdfs:label "Unset" ;
+	rdfs:comment "Unset a prefix on session or graph"@en ;
+    dskern:implementation cmd:Unset ;
+    .
+cmd:Unset a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Show a dskern:Function ;
+    rdfs:label "Show" ;
+	rdfs:comment "Show information on context & session"@en ;
+    dskern:implementation cmd:Show ;
+    .
+cmd:Show a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Validate a dskern:Function ;
+    rdfs:label "Validate" ;
+	rdfs:comment "Validate the data or particular resource "@en ;
+    dskern:implementation cmd:Validate ;
+    .
+cmd:Validate a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Export a dskern:Function ;
+    rdfs:label "Export" ;
+	rdfs:comment "Export graphs, dataset into file"@en ;
+    dskern:implementation cmd:Export ;
+    .
+cmd:Export a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Deploy a dskern:Function ;
+    rdfs:label "Deploy" ;
+	rdfs:comment "Deploy modules and vocabularies"@en ;
+    dskern:implementation cmd:Deploy ;
+    .
+cmd:Deploy a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Undeploy a dskern:Function ;
+    rdfs:label "Undeploy" ;
+	rdfs:comment "Undeploy modules and vocabularies"@en ;
+    dskern:implementation cmd:Undeploy ;
+    .
+cmd:Undeploy a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Getrjs a dskern:Function ;
+    rdfs:label "Getrjs" ;
+	rdfs:comment "Get RJS code from a database and write to local file system for editing."@en ;
+    dskern:implementation cmd:Getrjs ;
+    .
+cmd:Getrjs a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:FlushCache a dskern:Function ;
+    rdfs:label "FlushCache";
+	rdfs:comment "Flush one or all of the admin cache"@en ;
+    dskern:implementation cmd:Flushcache ;
+    .
+cmd:Flushcache a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Entail a dskern:Function ;
+    rdfs:label "entail" ;
+	rdfs:comment "Regenerate entailment data"@en ;
+    dskern:implementation cmd:Entail ;
+    .
+cmd:Entail a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Select a dskern:Function ;
+    rdfs:label "Select" ;
+	rdfs:comment "Execute a Sparql clause using kernel entailment"@en ;
+    dskern:implementation cmd:Select ;
+    .
+cmd:Select a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Sparql a dskern:Function ;
+    rdfs:label "Sparql" ;
+	rdfs:comment "Execute a Sparql clause using native graphs without kernel entailment"@en ;
+    dskern:implementation cmd:Sparql ;
+    .
+cmd:Sparql a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+### Patch subcommands
+dskern:Patch a dskern:Function ;
+    rdfs:label "Patch" ;
+	rdfs:comment "Patch an element as per JSON Patch"@en ;
+    dskern:implementation cmd:Patch ;
+    .
+cmd:Patch a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+### Console
+dskern:Console a rdfs:Class ; # dskern:command range classes
+    rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicRead ;
+	rdfs:comment "Entity that represents the RDF Platform console"@en ;
+    dskern:command.ABORT dskern:Abort ;
+    dskern:command.COMMIT dskern:Commit ;
+	dskern:command.START dskern:Start ;
+	dskern:command.BASELINE dskern:Baseline ;
+	dskern:command.COUNT dskern:Count ;
+	dskern:command.EXPORT dskern:Export ;
+	dskern:command.HELP dskern:Help ;
+	dskern:command.IMPORT dskern:Import ;
+	dskern:command.LIST dskern:List ;
+	dskern:command.PATCH dskern:Patch ;
+	dskern:command.POP dskern:Pop ;
+	dskern:command.PUSH dskern:Push ;
+	dskern:command.RUN dskern:Run ;
+	dskern:command.ECHO dskern:Echo ;
+	dskern:command.SET dskern:Set ;
+	dskern:command.UNSET dskern:Unset ;
+	dskern:command.SHOW dskern:Show ;
+	dskern:command.VALIDATE dskern:Validate ;
+	dskern:command.DEPLOY dskern:Deploy ;
+	dskern:command.UNDEPLOY dskern:Undeploy ;
+	dskern:command.GETRJS dskern:Getrjs ;
+	dskern:command.FLUSHCACHE dskern:FlushCache ;
+	dskern:command.ENTAIL dskern:Entail ;
+    dskern:command.INVOKE dskern:Invoke ;
+	dskern:command.SELECT  dskern:Select ;
+    dskern:command.SPARQL dskern:Sparql ;
+    .
+### Value Functions
+# it must have a signature, defined with a list of key value : [ argument name / arg type ] :
+dskern:ValueFunction a rdfs:Class ;
+	rdfs:subClassOf dskern:Function ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicInvoke ;
+    rdfs:label "ValueFunction"@en ;
+    .
+### Property Functions
+# it must have a signature, defined with a list of key value : [ argument name / arg type ] :
+dskern:PropertyFunction a rdfs:Class ;
+	rdfs:subClassOf dskern:Function, rdf:Property ;
+    dskern:signature [ a dskern:Signature ] ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicInvoke ;
+    rdfs:label "PropertyFunction"@en ;
+    .
+dskern:FunctionalPropertyFunction a rdfs:Class ;
+	rdfs:subClassOf dskern:PropertyFunction, owl:FunctionalProperty ;
+    .
+dskern:PropertyFunction.Simple a rdfs:Class ;
+    rdfs:subClassOf dskern:PropertyFunction ;
+    rdfs:label "PropertyFunction.Simple"@en ;
+    rdfs:comment "Class of property functions where arguments are not lists"@en ;
+    .
+dskern:PropertyFunction.SimpleAndList a rdfs:Class ;
+    rdfs:subClassOf dskern:PropertyFunction ;
+    rdfs:label "PropertyFunction.SimpleAndList"@en ;
+    rdfs:comment "Class of property functions where subject argument is not a list and object is a list"@en ;
+    .
+dskern:PropertyFunction.ListAndSimple a rdfs:Class ;
+    rdfs:subClassOf dskern:PropertyFunction ;
+    rdfs:label "PropertyFunction.ListAndSimple"@en ;
+    rdfs:comment "Class of property functions where subject argument is a list and object is not a list"@en ;
+    .
+dskern:PropertyFunction.List a rdfs:Class ;
+    rdfs:subClassOf dskern:PropertyFunction ;
+    rdfs:label "PropertyFunction.List"@en ;
+    rdfs:comment "Class of property functions where arguments are lists"@en ;
+    .
+dskern:PropertyFunction.Param  a rdfs:Class ;
+	rdfs:subClassOf dskern:PropertyFunction.SimpleAndList ;
+    rdfs:label "PropertyFunction.Param"@en ;
+    rdfs:comment "a Property Function with bounded parameters : [:s/?s] :pf ( :a :b :c ... [:x/?x] )"@en ;
+    .
+dskern:PropertyFunction.Param.OptionalResource a rdfs:Class ;
+	rdfs:subClassOf dskern:PropertyFunction.Param ;
+    dskern:signature [ a dskern:Signature ;
+        dskern:signatureArgs ( [ dskern:argType rdfs:Resource ] )
+	], [ a dskern:Signature ] ;
+    .
+dskern:ComputedProperty a rdfs:Class ;
+    rdfs:subClassOf dskern:PropertyFunction.Simple ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:subClassOf rdf:Property ;
+    rdfs:label "ComputedProperty"@en ;
+    .
+dskern:FunctionalComputedProperty a rdfs:Class ;
+    rdfs:subClassOf dskern:PropertyFunction.Simple ;
+    rdfs:subClassOf dskern:FunctionalPropertyFunction ;
+    rdfs:label "FunctionalComputedProperty"@en ;
+    .
+dskern:selectElement a owl:FunctionalProperty ;
+    rdfs:domain dskern:Implementation ;
+    rdfs:range xsd:string ;
+    .
+dskern:expandTriple a dskern:PropertyFunction ;
+    dskern:signature [ a dskern:Signature ] ; # TODO
+    rdfs:label "expandTriple" ;
+    dskern:implementation cmdD:ExpandTripleFunction ;
+    .
+cmdD:ExpandTripleFunction a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+
+### Property Paths
+
+dskern:PropertyPath a rdfs:Class ;
+	rdfs:subClassOf rdf:Property ;
+    rdfs:comment "Class of the properties that are computed based on an equivalent SPARQL path" .
+
+dskern:pathElement a owl:FunctionalProperty ;
+    rdfs:domain dskern:PropertyPath ;
+    rdfs:range rdfs:Resource .
+
+### SHACL extensions
+
+dskern:returnValue a rdf:Property ;
+    rdfs:comment "The returned values of a function."@en ;
+    rdfs:domain sh:Parameterizable ;
+    rdfs:label "return value"@en .
+
+### users and assignments
+
+dskern:password a dskern:Attribute ;
+    rdfs:domain foaf:Person;
+    rdfs:range xsd:string ;
+    .
+dskern:assignment a dskern:Attribute ;
+    rdfs:domain foaf:Person ;
+    rdfs:range rdf:Alt ;
+    dskern:rangeMemberRange dskern:SecurityContext ;
+    dskern:label "Assignment" ;
+    dskern:comment "User's Security Contexts" ;
+    dskern:key "assignment"^^xsd:string ;
+    .
+dskern:SecurityContext a rdfs:Class ;
+	rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicRead ;
+    .
+dskern:Role a rdfs:Class ;
+	rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicRead ;
+    dskern:label "Role";
+    .
+dskern:role a dskern:Attribute ;
+    rdfs:domain dskern:SecurityContext ;
+    rdfs:range [
+        a owl:Restriction ;
+        owl:onProperty rdfs:subClassOf ;
+        owl:someValuesFrom [ owl:oneOf (dskern:Role) ]
+    ] ;
+    dskern:key "group" ;
+    dskern:rangeFilter "?res WHERE { ?res rdfs:subClassOf+ dskern:Role }" ;
+    dskern:label "Group" ;
+    .
+dskern:owner a dskern:Attribute ;
+    rdfs:domain [
+        rdf:type owl:Class ;
+        owl:unionOf (dskern:Securable dskern:DirectOwnership)
+    ];
+    rdfs:range foaf:Agent;
+    .
+dskern:organization a dskern:Attribute ;
+    rdfs:domain [
+        rdf:type owl:Class ;
+        owl:unionOf (dskern:Securable dskern:DirectOwnership)
+    ] ;
+    rdfs:range [
+        a owl:Restriction ;
+        owl:onProperty rdfs:subClassOf ;
+        owl:someValuesFrom [ owl:oneOf (foaf:Organization) ]
+    ] ;
+    dskern:key "organization" ;
+    dskern:rangeFilter "?res WHERE { ?res rdfs:subClassOf+ foaf:Organization }" ;
+    dskern:label "Organization" ;
+    .
+dskern:collabSpace a dskern:Attribute ;
+    rdfs:domain [
+        rdf:type owl:Class ;
+        owl:unionOf (dskern:Securable dskern:DirectOwnership)
+    ] ;
+    rdfs:range [
+        a owl:Restriction ;
+        owl:onProperty rdfs:subClassOf ;
+        owl:someValuesFrom [ owl:oneOf (foaf:Project) ]
+    ] ;
+    dskern:key "collabSpace" ;
+    dskern:rangeFilter "?res WHERE { ?res rdfs:subClassOf+ foaf:Project }" ;
+    dskern:label "Project" ;
+    .
+dskern:projectMaturity a dskern:Attribute ;
+    rdfs:domain foaf:Project ;
+    rdfs:range xsd:string ;
+    .
+### access rules
+
+dskern:AccessRule a rdfs:Class ;
+	rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicConnect ;
+    .
+dskern:AccessItem a rdfs:Class ;
+	rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicRead ;
+    .
+dskern:PublicAccessItem a rdfs:Class ;
+	rdfs:subClassOf dskern:AccessItem ;
+    .
+dskern:OwnerAccessItem a rdfs:Class ;
+	rdfs:subClassOf dskern:AccessItem ;
+    .
+dskern:RoleAccessItem a rdfs:Class ;
+	rdfs:subClassOf dskern:AccessItem ;
+    .
+dskern:accessItem a dskern:Attribute ;
+    rdfs:domain dskern:AccessRule ;
+    rdfs:range rdf:Bag ;
+    .
+dskern:accessMask a dskern:Attribute ;
+    rdfs:domain dskern:AccessItem ;
+    rdfs:range xsd:string ;
+    .
+dskern:accessLogin a dskern:Attribute ;
+    rdfs:domain dskern:AccessItem ;
+    rdfs:range xsd:boolean ;
+    .
+dskern:accessRevoke a dskern:Attribute ;
+    rdfs:domain dskern:AccessItem ;
+    rdfs:range xsd:boolean ;
+    .
+dskern:accessOrganizationMatch a dskern:Attribute ;
+    rdfs:domain dskern:AccessItem ;
+    rdfs:range xsd:string ;
+    .
+dskern:accessProjectMatch a dskern:Attribute ;
+    rdfs:domain dskern:AccessItem ;
+    rdfs:range xsd:string ;
+    .
+dskern:accessProjectMaturity a dskern:Attribute ;
+    rdfs:domain dskern:AccessItem ;
+    rdfs:range xsd:string ;
+    .
+dskern:accessFilter a dskern:Attribute ;
+    rdfs:domain dskern:AccessItem ;
+    rdfs:range dskern:Function ;
+    .
+dskern:accessRole a dskern:Attribute ;
+    rdfs:domain dskern:RoleAccessItem ;
+    rdfs:range dskern:Role ;
+    .
+### access ownerships
+
+dskern:Ownership a rdfs:Class ;
+    .
+dskern:DirectOwnership a rdfs:Class ;
+	rdfs:subClassOf dskern:Ownership ;
+    .
+dskern:InheritedOwnership a rdfs:Class ;
+	rdfs:subClassOf dskern:Ownership ;
+    .
+dskern:InheritedAccess a rdfs:Class ;
+	rdfs:subClassOf dskern:Ownership ;
+    .
+dskern:ownership a dskern:Attribute ;
+    rdfs:domain dskern:Securable ;
+    rdfs:range rdf:Bag ;
+    .
+dskern:ownershipMask a dskern:Attribute ;
+    rdfs:domain dskern:Ownership ;
+    rdfs:range xsd:string ;
+    .
+dskern:ownershipParent a dskern:Attribute ;
+    rdfs:domain [
+        rdf:type owl:Class ;
+        owl:unionOf (dskern:InheritedOwnership dskern:InheritedAccess)
+    ];
+    rdfs:range dskern:Securable ;
+    .
+### securable instance
+dskern:Securable a dskern:Policy ;
+    .
+dskern:accessRule a dskern:Attribute ;
+    rdfs:domain [
+        rdf:type owl:Class ;
+        owl:unionOf (dskern:Securable dskern:Policy dskern:Constituent)
+    ];
+    rdfs:range dskern:AccessRule ;
+    .
+dskern:accessParent a dskern:Attribute ;
+# Blank node restrictions that cannot be evaluated currently return false
+#    rdfs:domain  [
+#        rdf:type owl:Class ;
+#        owl:disjointWith [ 
+#			rdf:type owl:Class ;
+#			owl:oneOf ( dskern:Securable )
+#		]
+#    ];
+    rdfs:range dskern:Securable ;
+	.
+
+dskern:canRead a rdf:Property ;
+    rdfs:domain foaf:Agent ;
+    rdfs:range dskern:Securable ;
+    .
+
+### definitions for public/admin access
+
+dskern:Project.Guest a rdfs:Class ;
+	rdfs:subClassOf foaf:Project ;
+    .
+dskern:Organization.Guest a rdfs:Class ;
+	rdfs:subClassOf foaf:Organization ;
+    .
+dskern:Role.Administrator a rdfs:Class ;
+	rdfs:subClassOf dskern:Role ;
+    .
+dskern:SecurityContext.Administrator a dskern:SecurityContext ;
+    dskern:role dskern:Role.Administrator ;
+    dskern:label "Administrator" ;
+    .
+dskern:Role.GlobalAdministrator a rdfs:Class ;
+	rdfs:subClassOf dskern:Role ;
+    dskern:label "Global Administrator" ;
+    .
+dskern:SecurityContext.GlobalAdministrator a dskern:SecurityContext ;
+    dskern:role dskern:Role.GlobalAdministrator ;
+    .
+dskern:AccessRule.AdminOnly a dskern:AccessRule ;
+    dskern:accessItem [
+        rdf:type rdf:Bag ;
+        rdf:_1 [
+            a dskern:RoleAccessItem ;
+            dskern:accessMask "all" ;
+            dskern:accessRole dskern:Role.Administrator
+        ] ;
+    ] ;
+    .
+dskern:AccessRule.GlobalAdminOnly a dskern:AccessRule ;
+    dskern:accessItem [
+        rdf:type rdf:Bag ;
+        rdf:_1 [
+            a dskern:RoleAccessItem ;
+            dskern:accessMask "all" ;
+            dskern:accessRole dskern:Role.GlobalAdministrator
+        ] ;
+    ] ;
+    .
+dskern:AccessRule.PublicRead a dskern:AccessRule ;
+    dskern:accessItem [
+        rdf:type rdf:Bag ;
+        rdf:_1 [
+            a dskern:PublicAccessItem ;
+            dskern:accessMask "read,show,invoke"
+        ] ;
+        rdf:_2 [
+            a dskern:RoleAccessItem ;
+            dskern:accessMask "all" ;
+            dskern:accessRole dskern:Role.Administrator
+        ] ;
+    ] ;
+    .
+dskern:AccessRule.GlobalPublicRead a dskern:AccessRule ;
+    dskern:accessItem [
+        rdf:type rdf:Bag ;
+        rdf:_1 [
+            a dskern:PublicAccessItem ;
+            dskern:accessMask "read,show,invoke"
+        ] ;
+        rdf:_2 [
+            a dskern:RoleAccessItem ;
+            dskern:accessMask "all" ;
+            dskern:accessRole dskern:Role.GlobalAdministrator
+        ] ;
+    ] ;
+    .
+dskern:AccessRule.PublicConnect a dskern:AccessRule ;
+    dskern:accessItem [
+        rdf:type rdf:Bag ;
+        rdf:_1 [
+            a dskern:PublicAccessItem ;
+            dskern:accessMask "read,show,connect,disconnect"
+        ] ;
+        rdf:_2 [
+            a dskern:RoleAccessItem ;
+            dskern:accessMask "all" ;
+            dskern:accessRole dskern:Role.Administrator
+        ] ;
+    ] ;
+    .
+    
+dskern:AccessRule.GlobalPublicConnect a dskern:AccessRule ;
+    dskern:accessItem [
+        rdf:type rdf:Bag ;
+        rdf:_1 [
+            a dskern:PublicAccessItem ;
+            dskern:accessMask "read,show,connect,disconnect"
+        ] ;
+        rdf:_2 [
+            a dskern:RoleAccessItem ;
+            dskern:accessMask "all" ;
+            dskern:accessRole dskern:Role.GlobalAdministrator
+        ] ;
+    ] ;
+    .
+    
+dskern:AccessRule.GlobalPublicInvoke a dskern:AccessRule ;
+    dskern:accessItem [
+        rdf:type rdf:Bag ;
+        rdf:_1 [
+            a dskern:PublicAccessItem ;
+            dskern:accessMask "read,show,invoke,connect,disconnect"
+        ] ;
+        rdf:_2 [
+            a dskern:RoleAccessItem ;
+            dskern:accessMask "all" ;
+            dskern:accessRole dskern:Role.GlobalAdministrator
+        ] ;
+    ] ;
+    .
+	
+dskern:AccessParent a dskern:AccessRule ;
+    .
+	
+dskern:Person.Guest a foaf:Person ;
+    dskern:tenants [
+        rdf:type rdf:Alt ;
+        rdf:_1 dskern:Tenant.tenant1 ;
+    ] ;
+    .
+dskern:Person.Creator a foaf:Person ;
+    dskern:tenants [
+        rdf:type rdf:Alt ;
+        rdf:_1 dskern:Tenant.tenant1 ;
+    ] ;
+    dskern:assignment [
+        rdf:type rdf:Alt ;
+        rdf:_1 dskern:SecurityContext.Administrator ;
+    ] ;
+    .
+dskern:Person.GlobalCreator a foaf:Person ;
+    dskern:tenants [
+        rdf:type rdf:Alt ;
+        rdf:_1 dskern:Tenant.global ;
+    ] ;
+    dskern:assignment [
+      rdf:type rdf:Alt ;
+      rdf:_1 dskern:SecurityContext.GlobalAdministrator ;
+    ] ;
+    .
+## Default autonamers for URI & label
+# forward slash delimited (or should it be any other delimiters??)
+# unique id length is the number of # chars or should it be just length in numbers?
+dskern:formatString a dskern:Attribute ; # format string, e.g. "prefix/#########/suffix"
+    rdfs:range xsd:string ;
+    .
+dskern:AutoName.autoGenerator a dskern:PredefinedProcedure ;
+    rdfs:label "get Unique ID"@en ;
+    dskern:signature [a dskern:Signature ;
+        dskern:signatureArgs (
+            [dskern:argType xsd:string; rdfs:label "baseUri"; rdfs:comment "Uri of the base entity to expand"@en ]
+            [dskern:argType xsd:string; rdfs:label "prefix"; rdfs:comment "Prefix String"@en ]
+            [dskern:argType xsd:string; rdfs:label "suffix"; rdfs:comment "Suffix String"@en ]
+            [dskern:argType xsd:integer; rdfs:label "length"; rdfs:comment "length of unique id"@en ]
+        ) ;
+        dskern:signatureReturnType [
+            dskern:argType "id" ;
+            rdfs:comment "Auto generated Id"@en
+        ]
+    ] ;
+    .
+dskern:autoGenerator a rdf:Property ;
+	rdfs:subPropertyOf dskern:method ;
+    dskern:api dskern:AutoName.autoGenerator ;
+    rdfs:range dskern:Implementation ;
+    .
+<java:com.dassault_systemes.rdfplatform.util.StandardServices#getUniqueId> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+# autoname policy definition (implies no suffix)
+dskern:AutoName a rdfs:Class ;
+	rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicInvoke ;
+    dskern:formatString  "Id./#########/"^^xsd:string ;
+    dskern:autoGenerator <java:com.dassault_systemes.rdfplatform.util.StandardServices#getUniqueId> ;
+    .
+# default AutoName individual
+dskern:defaultAutoname a dskern:AutoName ;
+    .
+dskern:autonamer a rdf:Property ;
+    rdfs:label "autonamer"@en ;
+    rdfs:comment "an autonamer on a class or prototype"@en ;
+    rdfs:range dskern:AutoName ;
+    .
+dskern:autonamer.URI a rdf:Property ;
+	rdfs:subPropertyOf dskern:autonamer ;
+    rdfs:range dskern:AutoName ;
+    .
+dskern:autonamer.LABEL a rdf:Property ;
+	rdfs:subPropertyOf dskern:autonamer ;
+    rdfs:range dskern:AutoName ;
+    .
+
+# autoname policy applies to prototype instances
+dskern:Prototype a rdfs:Class ;
+	dskern:autonamer.URI dskern:defaultAutoname ;
+    .
+# change log
+
+dskern:opTimestamp a dskern:Attribute ;
+    rdfs:label "opTimestamp"@en ;
+    rdfs:comment "A timestamp when an operation occurred."@en ;
+    rdfs:domain [ owl:unionOf (dskern:Transaction dskern:Operation) ] ;
+    rdfs:range xsd:dateTime ;
+    .
+dskern:opUser a dskern:Attribute ;
+    rdfs:label "opUser"@en ;
+    rdfs:comment "The context user during an operation."@en ;
+    rdfs:domain [ owl:unionOf (dskern:Transaction dskern:Operation) ] ;
+    rdfs:range foaf:Person ;
+    .
+dskern:opUserRole a dskern:Attribute ;
+    rdfs:label "opUserRole"@en ;
+    rdfs:comment "The security context role during an operation."@en ;
+    rdfs:domain dskern:Transaction ;
+    rdfs:range dskern:SecurityContext ;
+    .
+dskern:opFunction a dskern:Attribute ;
+    rdfs:label "opFunction"@en ;
+    rdfs:comment "The function used by an operation."@en ;
+    rdfs:domain dskern:Operation ;
+    rdfs:range dskern:Function ;
+    .
+dskern:opResource a dskern:Attribute ;
+    rdfs:label "opResource"@en ;
+    rdfs:comment "The resource subject of an operation."@en ;
+    rdfs:domain dskern:Operation ;
+    rdfs:range rdfs:Resource ;
+    .
+dskern:arguments a dskern:Attribute ;
+    rdfs:label "arguments"@en ;
+    ####rdfs:comment "The input arguments to a function represented as a list of name/value pairs."@en ;
+    rdfs:comment "The input arguments to a function."@en ;
+    rdfs:domain dskern:Operation ;
+    ####rdfs:range rdf:List ;
+    rdfs:range xsd:string ;
+    .
+dskern:result a dskern:Attribute ;
+    rdfs:label "result"@en ;
+    rdfs:comment "The results returned from a function."@en ;
+    rdfs:domain dskern:Operation ;
+    rdfs:range xsd:string ;
+    .
+dskern:activity a dskern:Attribute ;
+    a owl:TransitiveProperty ;
+    rdfs:label "activity"@en ;
+    rdfs:comment "A sequence of operations."@en ;
+    rdfs:domain [ owl:unionOf (dskern:Transaction dskern:Operation) ] ;
+    rdfs:range rdf:Seq ;
+    .
+dskern:Required.opTimestamp a owl:Restriction ;
+    owl:onProperty dskern:opTimestamp ;
+    owl:someValuesFrom xsd:dateTime ;
+    .
+dskern:Required.opUser a owl:Restriction ;
+    owl:onProperty dskern:opUser ;
+    owl:someValuesFrom foaf:Person ;
+    .
+dskern:Required.opFunction a owl:Restriction ;
+    owl:onProperty dskern:opFunction ;
+    owl:someValuesFrom dskern:Function ;
+    .
+dskern:Required.opResource a owl:Restriction ;
+    owl:onProperty dskern:opResource ;
+    owl:someValuesFrom rdfs:Resource ;
+    .
+dskern:Transaction a rdfs:Class ;
+    rdfs:label "Transaction"@en ;
+    rdfs:comment "The class of transaction instances."@en ;
+    rdfs:subClassOf dskern:Required.opTimestamp ;
+    rdfs:subClassOf dskern:Required.opUser ;
+    .
+dskern:Operation a rdfs:Class ;
+    rdfs:label "Operation"@en ;
+    rdfs:comment "The class of operation instances."@en ;
+    rdfs:subClassOf dskern:Required.opTimestamp ;
+    rdfs:subClassOf dskern:Required.opUser ;
+    rdfs:subClassOf dskern:Required.opFunction ;
+    rdfs:subClassOf dskern:Required.opResource ;
+    .
+### Components of Function Signatures
+#Property that links Functions to their Signature
+dskern:signature a owl:AnnotationProperty ;
+	rdfs:comment "Property that links a function to it's signature definition"@en ;
+    rdfs:domain dskern:PredefinedProcedure ;
+    rdfs:range dskern:Signature ;
+    .
+#Every function can have an instance of Signature or link to other matching instances
+dskern:Signature a rdfs:Class ;
+    rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicRead ;
+	rdfs:comment "Class that represents a function's signature definition"@en ;
+    .
+#Properties that links dskern:Signature with it's different sections (there are 4 sections - as of now)
+# 1) Property that relates to a Section that represents its arguments
+dskern:signatureArgs a dskern:Attribute ;
+	rdfs:comment "Property that links function's signature to its arguments"@en ;
+    rdfs:domain dskern:Signature ;
+	rdfs:range rdf:List ;
+    .
+#Property to indicate each argument type
+dskern:argType a dskern:Attribute ;
+# TODO remove rdfs:resource from domain
+	rdfs:range [owl:unionOf ( rdfs:Resource rdfs:Datatype rdfs:Class )] ;
+    .
+#a special kinds of argType
+dskern:commandKeywordValue a dskern:Attribute ;
+	rdfs:domain rdfs:Class ;
+	rdfs:range xsd:string ;
+    .
+#Commands can have standard keyword - mandatory & not followed by any values
+dskern:CommandKeyword a rdfs:Class;
+    rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicRead ;
+    .
+#Or it's an optional keyword without any values
+dskern:OptionalCommandKeyword a rdfs:Class;
+    rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicRead ;
+    .
+#Commands can have standard keyword - mandatory & followed by some values
+dskern:CommandKeywordWithValue a rdfs:Class ;
+	rdfs:subClassOf dskern:CommandKeyword ;
+    dskern:commandKeywordValue "" ;
+    .
+#when it's an optional keyword with some values
+dskern:OptionalCommandKeywordWithValue a rdfs:Class ;
+	rdfs:subClassOf dskern:OptionalCommandKeyword ;
+    dskern:commandKeywordValue "" ;
+    .
+# 2) Property that to indicate input value type/form supported by the function
+dskern:signatureInputValueForm a dskern:Attribute ;
+	rdfs:comment "Property that links function's signature to its arguments"@en ;
+    rdfs:domain dskern:Signature ;
+    rdfs:range dskern:SignatureInputValueForm ;
+    .
+dskern:SignatureInputValueForm a rdfs:Class;
+    rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicRead ;
+	rdfs:comment "enumeration to represent what command input values can be"@en ;
+    .
+#enumeration to represent what command input values can be
+# At present the commands support 4 forms a) predicate value pairs b) triple form c) list of values
+dskern:SignatureInputValueList a dskern:SignatureInputValueForm ;
+	rdfs:label "Arguments" ;
+	rdfs:comment "Values in form of list --> arg ( arg )* << "@en ;
+    .
+dskern:SignatureInputValueTurtle a dskern:SignatureInputValueForm ;
+	rdfs:label "Properties" ;
+	rdfs:comment "Values in of the form turtle properties --> [predicate ObjectList ( ';' ( predicate ObjectList )? )* '.' ]"@en ;
+    .
+# 3) Property to indicate if function supports where clause
+dskern:signatureClause a dskern:Attribute ;
+	rdfs:comment "Where Clause of the function"@en ;
+    rdfs:domain dskern:Signature ;
+    rdfs:range dskern:Expression ;
+    .
+dskern:signatureGraph a dskern:Attribute ;
+	rdfs:comment "With graph Clause of the function"@en ;
+    rdfs:domain dskern:Signature ;
+    rdfs:range dskern:Expression ;
+    .
+#not interpreted much for now. might be useful
+###dskern:Expression a rdfs:Datatype ;
+dskern:Expression a rdfs:Class ;
+###	rdfs:subClassOf xsd:string ;
+	rdfs:comment "Expressions used in commands/functions"@en ;
+    .
+dskern:SparqlExpression a dskern:Expression ;
+	rdfs:label "SparqlExpression"@en ;
+	rdfs:comment "Sparql snippet of the form {?s ?p ?o ...}"@en ;
+    .
+dskern:WithGraphExpression a dskern:Expression ;
+	rdfs:label "graph-name"@en ;
+	rdfs:comment "Name of the Graph to limit this command to"@en ;
+    .
+dskern:RqlExpression a rdfs:Class ;
+	rdfs:subClassOf dskern:Expression ;
+	rdfs:label "RqlExpression"@en ;
+	rdfs:comment "New MQL expression (nested commands)"@en ;
+    .
+# 4) indicate options used by signature...
+dskern:signatureOption a rdf:Property ;
+	rdfs:comment "Property that links function's signature to the options"@en ;
+    rdfs:domain dskern:Signature ;
+    rdfs:range [owl:unionOf ( dskern:SignatureOption dskern:SignatureOptionWithValue )] ;
+    .
+# an option is a special keyword that can be either something that's not followed by any values
+dskern:SignatureOption a rdfs:Class ;
+	rdfs:subClassOf dskern:OptionalCommandKeyword ;
+	dskern:formatString "-" ;
+	rdfs:comment "Class that represent a re-usable options"@en ;
+    .
+# Or something that's followed by some values
+dskern:SignatureOptionWithValue a rdfs:Class ;
+	rdfs:subClassOf dskern:OptionalCommandKeywordWithValue ;
+	dskern:formatString "-" ;
+	rdfs:comment "Class that represent a re-usable options with values"@en ;
+    .
+# 5) indicate what the function returns
+dskern:signatureReturnType a dskern:Attribute ;
+	rdfs:comment "Return type of the function"@en ;
+    rdfs:domain dskern:Signature ;
+    rdfs:range rdfs:Resource ;
+    .
+#################################################################
+#
+#   Entity base
+#
+#################################################################
+
+dskern:Entity a rdfs:Class ;
+	rdfs:subClassOf dskern:Prototype ;
+    rdfs:subClassOf dskern:Securable ;
+    rdfs:label "Entity Type"@en ;
+    rdfs:comment "The base class for all entity types"@en ;
+	.
+
+#################################################################
+#
+#   Module-related
+# @@@t3s
+#################################################################
+dskern:Module a rdfs:Class ;
+	rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicConnect ;
+    rdfs:label "Module"@en ;
+    .
+dskern:Implementation a rdfs:Class ;
+	rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicInvoke ;
+    rdfs:label "Implementation"@en ;
+    .
+# functionProp
+dskern:module a dskern:Attribute ;
+    rdfs:domain dskern:Implementation ;
+    rdfs:range dskern:Module ;
+    .
+dskern:version a dskern:Attribute ;
+#    rdfs:domain dskern:Module ;
+    rdfs:range xsd:integer ;
+    .
+dskern:jsCode a dskern:Attribute ;
+    rdfs:domain dskern:Module ;
+    rdfs:range xsd:string ;
+    .
+dskern:rjsCode a dskern:Attribute ;
+    rdfs:domain dskern:Module ;
+    rdfs:range xsd:string ;
+    .
+dskern:isVolatile a dskern:Attribute ;
+    rdfs:domain dskern:Module ;
+    rdfs:range xsd:boolean ;
+    .
+dskern:isDependency a dskern:Attribute ;
+    rdfs:domain dskern:Module;
+    rdfs:range xsd:boolean ;
+    .
+<lang:Datatype> a rdfs:Class ;
+    dskern:isDefinedBy dskern: ;
+    rdfs:comment "Class of the datatypes used as parameter of predefined procedures; not to be confused with rdfs:Datatype" ;
+    .
+<lang:number> a <lang:Datatype> ;
+    rdfs:comment "Language agnostic primitive Number type" ;
+    dskern:isDefinedBy dskern: ;
+	.
+<lang:string> a <lang:Datatype> ;
+    rdfs:comment "Language agnostic primitive String type" ;
+    dskern:isDefinedBy dskern: ;
+	.
+<lang:boolean> a <lang:Datatype> ;
+    rdfs:comment "Language agnostic primitive Boolean type" ;
+    dskern:isDefinedBy dskern: ;
+	.
+<js:object> a <lang:Datatype> ;
+    rdfs:comment "JavaScript Object type" ;
+    dskern:isDefinedBy dskern: ;
+	.
+<js:array> a <lang:Datatype> ;
+    rdfs:comment "JavaScript Array type" ;
+    dskern:isDefinedBy dskern: ;
+	.
+
+#error definition
+dskern:ErrorType a rdfs:Class ;
+    rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicRead ;
+    .
+dskern:Notice a dskern:Enum.ErrorType ;
+    rdfs:label "notice" ;
+    rdfs:comment "Error type to indicate it is only a notification"@en ;
+    .
+dskern:Warning a dskern:Enum.ErrorType ;
+    rdfs:label "warning" ;
+    rdfs:comment "Error type to indicate it is only a warning"@en ;
+    .
+dskern:UserError a dskern:Enum.ErrorType ;
+    rdfs:label "usererror" ;
+    rdfs:comment "Error type to indicate it is due to user error"@en ;
+    .
+dskern:SystemError a dskern:Enum.ErrorType ;
+    rdfs:label "systemerror" ;
+    rdfs:comment "Error type to indicate it is a system error"@en ;
+    .
+dskern:FatalError a dskern:Enum.ErrorType ;
+    rdfs:label "fatalerror" ;
+    rdfs:comment "Error type to indicate it is a fatal error and cannot be recovered"@en ;
+    .
+dskern:Enum.ErrorType a rdfs:Class ;
+	owl:oneOf (dskern:Notice dskern:Warning dskern:UserError dskern:SystemError dskern:FatalError) ;
+    .
+dskern:errorString a dskern:Attribute ;
+    rdfs:domain dskern:ErrorMsg ;
+    rdfs:range  rdf:langString ;
+    .
+dskern:errorType a dskern:Attribute ;
+    rdfs:domain dskern:ErrorMsg ;
+    rdfs:range  dskern:Enum.ErrorType ;
+    .
+#base entity for all messages declared in system
+dskern:ErrorMsg a rdfs:Class ;
+    rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicRead ;
+    .
+#declare generic error message (it's used when errors are not explicitly declared in dictionary)...
+dskern:ErrorMsg.Generic a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "%s"@en ;
+    .
+#L2/AdminCache versioning
+dskern:AdminCache a rdfs:Class ;
+    rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicRead ;
+	dskern:version "0"^^xsd:integer ;
+    .
+
+#store cache version info in a jsonified status triple
+dskern:AdminCacheVersions a rdfs:Class ;
+    rdfs:subClassOf dskern:Securable ;
+    dskern:status ""^^xsd:string ;
+	. 
+
+dskern:AdminCacheMetaInfo a rdfs:Class ;
+    rdfs:subClassOf dskern:Securable ;
+	. 
+
+#resources that can influence one of more cache
+dskern:impactedBy a rdf:Property ;
+    .
+dskern:cacheSize a dskern:Attribute ;
+    rdfs:range xsd:integer ;
+    .
+dskern:CmdHandlersCache a dskern:AdminCache, dskern:Function ;
+	dskern:signature [ a dskern:Signature ] ;
+	dskern:impactedBy dskern:Function ;
+	dskern:version "0"^^xsd:integer ;
+	dskern:cacheSize "1000"^^xsd:integer ;
+	dskern:implementation <java:com.dassault_systemes.rdfplatform.cache.CmdHandlerAdminCache> ;
+    .
+<java:com.dassault_systemes.rdfplatform.cache.CmdHandlerAdminCache> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:SignaturesCache a dskern:AdminCache, dskern:Function ;
+	dskern:signature [ a dskern:Signature ] ;
+	dskern:impactedBy dskern:Signature ;
+	dskern:impactedBy dskern:Function ;
+	dskern:cacheSize "1000"^^xsd:integer ;
+	dskern:version "0"^^xsd:integer ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.cache.SignatureAdminCache> ;
+    .
+<java:com.dassault_systemes.rdfplatform.cache.SignatureAdminCache> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+#dskern:JSModulesCache a dskern:AdminCache, dskern:Function ;
+#	dskern:signature [ a dskern:Signature ] ;
+#	dskern:impactedBy dskern:Module ;
+#	dskern:cacheSize "1000"^^xsd:integer ;
+#	dskern:version "0"^^xsd:integer ;
+#    dskern:implementation <java:com.dassault_systemes.rdfplatform.cache.ModuleAdminCache> ;
+#    .
+#<java:com.dassault_systemes.rdfplatform.cache.ModuleAdminCache> a dskern:Implementation ;
+#    dskern:isDefinedBy dskern: ;
+#    .
+dskern:MasksCache a dskern:AdminCache, dskern:Function ;
+	dskern:signature [ a dskern:Signature ] ;
+	dskern:impactedBy dskern:Mask ;
+	dskern:cacheSize "10000"^^xsd:integer ;
+	dskern:version "0"^^xsd:integer ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.cache.MasksCache> ;
+    .
+<java:com.dassault_systemes.rdfplatform.cache.MasksCache> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:FunctionNamesCache a dskern:AdminCache, dskern:Function ;
+	dskern:signature [ a dskern:Signature ] ;
+	dskern:impactedBy dskern:Function ;
+	dskern:cacheSize "1000"^^xsd:integer ;
+	dskern:version "0"^^xsd:integer ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.cache.FunctionNamesAdminCache> ;
+    .
+<java:com.dassault_systemes.rdfplatform.cache.FunctionNamesAdminCache> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:AccessRulesCache a dskern:AdminCache, dskern:Function ;
+	dskern:signature [ a dskern:Signature ] ;
+	dskern:impactedBy dskern:AccessRule ;
+	dskern:cacheSize "100000"^^xsd:integer ;
+	dskern:version "0"^^xsd:integer ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.cache.AccessRuleAdminCache> ;
+    .
+<java:com.dassault_systemes.rdfplatform.cache.AccessRuleAdminCache> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:EntailedClosuresCache a dskern:AdminCache, dskern:Function ;
+	dskern:signature [ a dskern:Signature ] ;
+	dskern:version "0"^^xsd:integer ;
+	dskern:cacheSize "100000"^^xsd:integer ;
+	dskern:impactedBy rdfs:Resource ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.cache.EntailedAdminClosuresCache> ;
+    .
+<java:com.dassault_systemes.rdfplatform.cache.EntailedAdminClosuresCache> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:PropertiesCache a dskern:AdminCache, dskern:Function ;
+	dskern:signature [ a dskern:Signature ] ;
+	dskern:version "0"^^xsd:integer ;
+	dskern:cacheSize "100000"^^xsd:integer ;
+	dskern:impactedBy rdfs:Resource ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.cache.AdminPropertiesCache> ;
+    .
+<java:com.dassault_systemes.rdfplatform.cache.AdminPropertiesCache> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:PropertyTypeCache a dskern:AdminCache, dskern:Function ;
+	dskern:signature [ a dskern:Signature ] ;
+	dskern:version "0"^^xsd:integer ;
+	dskern:cacheSize "100000"^^xsd:integer ;
+	dskern:impactedBy rdfs:Resource ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.cache.PropertyTypeCache> ;
+    .
+<java:com.dassault_systemes.rdfplatform.cache.PropertyTypeCache> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:TriggerFunctionCache a dskern:AdminCache, dskern:Function ;
+	dskern:signature [ a dskern:Signature ] ;
+	dskern:version "0"^^xsd:integer ;
+	dskern:cacheSize "100000"^^xsd:integer ;
+	dskern:impactedBy dskern:TriggerFunction ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.cache.TriggerFunctionCache> ;
+    .
+<java:com.dassault_systemes.rdfplatform.cache.TriggerFunctionCache> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:BlacklistCache a dskern:AdminCache, dskern:Function ;
+	dskern:signature [ a dskern:Signature ] ;
+	dskern:version "0"^^xsd:integer ;
+	dskern:cacheSize "100"^^xsd:integer ;
+	dskern:impactedBy dskern:Blacklist ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.cache.BlacklistAdminCache> ;
+    .
+<java:com.dassault_systemes.rdfplatform.cache.BlacklistAdminCache> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:GraphPropertiesCache a dskern:AdminCache, dskern:Function ;
+	dskern:signature [ a dskern:Signature ] ;
+	dskern:version "0"^^xsd:integer ;
+	dskern:cacheSize "10000"^^xsd:integer ;
+	dskern:impactedBy dskern:Graph ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.cache.GraphPropertiesAdminCache> ;
+    .
+<java:com.dassault_systemes.rdfplatform.cache.GraphPropertiesAdminCache> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+#command actions on resources triggering cache update
+rdfs:Class dskern:command.MODIFY dskern:FlushCache ;
+    .
+rdfs:Class dskern:command.INSERTTRIPLE dskern:FlushCache ;
+    .
+dskern:Function dskern:command.MODIFY dskern:FlushCache ;
+    .
+dskern:Signature dskern:command.MODIFY dskern:FlushCache ;
+    .
+dskern:Module dskern:command.MODIFY dskern:FlushCache ;
+    .
+dskern:Blacklist dskern:command.REMOVE dskern:FlushCache ;
+	.
+dskern:AccessRule dskern:command.MODIFY dskern:FlushCache ;
+    .
+#rdfs:Class dskern:command.REMOVE dskern:FlushCache .
+rdfs:Class dskern:command.DELETE dskern:FlushCache ;
+    .
+rdfs:Class dskern:command.DELETETRIPLE dskern:FlushCache ;
+    .
+dskern:Function dskern:command.DELETE dskern:FlushCache ;
+    .
+dskern:Signature dskern:command.DELETE dskern:FlushCache ;
+    .
+dskern:Module dskern:command.DELETE dskern:FlushCache ;
+    .
+dskern:AccessRule dskern:command.DELETE dskern:FlushCache ;
+    .
+dskern:Graph dskern:command.ADD dskern:FlushCache ;
+    .
+dskern:Graph dskern:command.MODIFY dskern:FlushCache ;
+    .
+dskern:Graph dskern:command.DELETE dskern:FlushCache ;
+    .
+
+# Synchronisation Services
+dskern:ExecutableOperation a rdfs:Class ;
+	rdfs:subClassOf dskern:Operation ;
+    .
+dskern:SynchronizationEvent a rdfs:Class ;
+	rdfs:subClassOf dskern:Required.opTimestamp ;
+    .
+dskern:graph a dskern:Attribute ;
+    rdfs:comment "associated graph"@en ;
+    rdfs:domain dskern:ExecutableOperation ;
+    rdfs:range rdfg:Graph ;
+    .
+dskern:input a rdf:Property ;
+    rdfs:comment "input as a tuple [ input type, [ values ] ]"@en ;
+    rdfs:domain dskern:ExecutableOperation ;
+    rdfs:range rdf:List ;
+    .
+dskern:output a dskern:Attribute ;
+    rdfs:comment "output as a single element, a list or a map (list of list)"@en ;
+    rdfs:domain dskern:ExecutableOperation ;
+    .
+dskern:chainableOutput a dskern:Attribute ;
+    rdfs:comment "output as a single element, a list or a map (list of list)"@en ;
+    rdfs:domain dskern:ExecutableOperation ;
+    .
+dskern:rdfQL a dskern:Attribute ;
+    rdfs:comment "compiled rdfQL command line"@en ;
+    rdfs:domain dskern:ExecutableOperation ;
+    rdfs:range xsd:string ;
+    .
+dskern:searchService a dskern:Attribute ;
+    .
+dskern:persistencyService a dskern:Attribute ;
+    .
+dskern:securityClearanceFor a dskern:Attribute ;
+    rdfs:range foaf:Person ;
+    .
+dskern:intent a rdf:Property, dskern:Sparse ;
+    rdfs:domain rdfg:Graph ;
+    rdfs:range xsd:string ;
+    .
+dskern:extendedBy a rdf:Property, dskern:Sparse ;
+    rdfs:domain rdfg:Graph ;
+    .
+# elements used to manage applications and their artifacts
+dskern:Package a rdfs:Class ;
+    rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicConnect ;
+    rdfs:label "Package"@en ;
+    rdfs:comment "A package of resources, used by applications"@en ;
+    .
+dskern:Shapes a rdfs:Class ;
+    rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.GlobalPublicConnect ;
+    rdfs:label "Shapes"@en ;
+    rdfs:comment "A class of shapes"@en ;
+    .
+dskern:shapesGraph a dskern:Attribute ;
+    rdfs:label "shapesGraph"@en ;
+    rdfs:comment "Associated shapes graph"@en ;
+    rdfs:domain dskern:Shapes ;
+    rdfs:range xsd:string ;
+    .
+dskern:vocabGraph a dskern:Attribute ;
+    rdfs:label "vocabGraph"@en ;
+    rdfs:comment "Associated vocabulary graph"@en ;
+    rdfs:domain owl:Ontology ;
+    rdfs:range xsd:string ;
+    .
+dskern:fragment a owl:OntologyProperty ;
+    rdfs:label "fragment"@en ;
+    rdfs:comment "Fragment file to be included"@en ;
+    rdfs:domain owl:Ontology ;
+    rdfs:range xsd:string ;
+    .
+dskern:dependsOn a owl:OntologyProperty ;
+    rdfs:label "dependsOn"@en ;
+    rdfs:comment "The property that is used for dependencies"@en ;
+    rdfs:domain owl:Ontology ;
+    rdfs:range rdfs:Resource ;
+    .
+dskern:vocabulary a rdf:Property ;
+    rdfs:label "vocabulary"@en ;
+    rdfs:comment "The property that identifies a vocabulary"@en ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range owl:Ontology ;
+    .
+dskern:upgrade a dskern:Attribute ;
+    rdfs:label "upgrade"@en ;
+    rdfs:comment "The property that identifies a upgrade information"@en ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range rdfs:Resource ;
+    .
+dskern:procedure a rdf:Property ;
+    rdfs:label "procedure"@en ;
+    rdfs:comment "The property that identifies a predefined procedure"@en ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range dskern:Function ;
+    .
+dskern:dataUpgradeVersion a rdf:Property ;
+    rdfs:label "dataUpgradeVersion"@en ;
+    rdfs:comment "The property that identifies the version data has been upgraded"@en ;
+    rdfs:domain dskern:DataGraph ;
+    rdfs:range rdfs:Resource ;
+    .
+dskern:upgradeToVersion a rdf:Property ;
+    rdfs:label "upgradeToVersion"@en ;
+    rdfs:comment "The property that identifies the version a dependent vocabulary must achieve"@en ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range rdfs:Resource ; # typically a string like "2.0.3"
+    .
+dskern:belongsToPackage a rdf:Property ;
+    rdfs:label "belongsToPackage"@en ;
+    rdfs:comment "The property that is used for including a resource in a package"@en ;
+    rdfs:range dskern:Package ;
+    .
+
+# Datatype validation operator
+dskern:isValidValue a rdf:Property ;
+	rdfs:subPropertyOf dskern:method ;
+    a dskern:Sparse ;
+    dskern:api [ a dskern:PredefinedProcedure ;
+        dskern:signature [ a dskern:Signature ;
+            dskern:signatureArgs ( [ owl:oneOf ( <java:java.lang.Object> <java:java.lang.reflect.Array> ) ] ) ;
+            dskern:signatureReturnType [ dskern:argType xsd:boolean ] ;
+       ] ;
+    ] ;
+    rdfs:domain rdfs:Datatype ;
+    rdfs:range dskern:Implementation ;
+    .
+dskern:JsonDatatype a rdfs:Class ;
+	rdfs:subClassOf rdfs:Datatype ;
+    .

@@ -1,0 +1,31 @@
+# This file includes the standard rdfg vocabulary. 
+
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdfg:  <http://www.w3.org/2004/03/trix/rdfg-1/> .
+############################################################################
+
+rdfg: a owl:Ontology ;
+    rdfs:comment "The Graph RDF vocabulary, described using W3C RDF Schema and the Web Ontology Language." ;
+    rdfs:label "Graph Vocabulary" ;
+    .
+rdfg:Graph a rdfs:Class ;
+    rdfs:isDefinedBy rdfg: ;
+    rdfs:label "Graph"@en ;
+    rdfs:comment "An RDF graph (with intensional semantics)."@en ;
+    .
+rdfg:equivalentGraph a rdf:Property ;
+    rdfs:isDefinedBy rdfg: ;
+    rdfs:label "equivalent graph"@en ;
+    rdfs:comment "The graphs associated with the subject and object are equivalent."@en ;
+    rdfs:domain rdfg:Graph ;
+    rdfs:range rdfg:Graph ;
+    .
+rdfg:subGraphOf a rdf:Property ;
+    rdfs:isDefinedBy rdfg: ;
+    rdfs:label "subgraph of"@en ;
+    rdfs:comment "The graph associated with the subject is a subgraph of a graph equivalent to that associated with the object."@en ;
+    rdfs:domain rdfg:Graph ;
+    rdfs:range rdfg:Graph ;
+    .

@@ -1,0 +1,37 @@
+# 19-jan-2017 - t3s - creation
+
+# RDF Related
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+# Names spaces for the Corpus
+@prefix dskern:    <http://www.3ds.com/RDF/Corpus/Kernel/> .
+
+
+dskern:Blacklist a rdfs:Class;
+	rdfs:subClassOf dskern:Securable ;
+    dskern:accessRule dskern:AccessRule.PublicRead ;
+    dskern:subjectTrigger.CONNECT dskern:FlushBlacklistCache ;
+    dskern:subjectTrigger.DISCONNECT dskern:FlushBlacklistCache ;
+	rdfs:label "Blacklist"@en ;
+	rdfs:comment "List of java packages and classes that are inaccessible to Predefined Procedures"@en ;
+	.
+dskern:restrictAccess a rdf:Property, dskern:Sparse ;
+	rdfs:domain dskern:Blacklist ;
+	rdfs:range rdfs:Resource ;
+	rdfs:label "restrictAccess"@en ;
+	.
+dskern:FlushBlacklistCache a dskern:ActionTriggerFunction ; 
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "FlushBlacklistCache" ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.invocation.Blacklist$ResetBlacklistCache> ;
+	.
+<java:com.dassault_systemes.rdfplatform.invocation.Blacklist$ResetBlacklistCache> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:javaBlacklist a dskern:Blacklist ;
+    dskern:accessRule dskern:AccessRule.PublicRead ;
+#	dskern:restrictAccess <java:java.awt> ;
+#	dskern:restrictAccess <java:javax.swing> ;
+	.

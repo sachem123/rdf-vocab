@@ -1,0 +1,132 @@
+# This is the constituent element vocabulary
+
+# RDF Related
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+
+# Names spaces for the Corpus : M0 in Default graph
+@prefix dskern:  <http://www.3ds.com/RDF/Corpus/Kernel/> .
+#################################
+
+# Constituency support
+# This restriction does not work as assumed.  inverseOf only takes a 
+#   subPropertyOf or instance, not a type.
+#   It willwill be re-applied when SHACL is introduced
+#dskern:Constituent.RequireComposer a owl:Restriction ;
+#    owl:onProperty [ owl:inverseOf dskern:CompositionProperty ] ;  
+#	 owl:cardinality "1"^^xsd:nonNegativeInteger ;                   
+#	 .
+
+#dskern:Constituent.DisjointSecurable a owl:Restriction ;
+#    owl:disjointWith [ a owl:Class ; owl:oneOf ( dskern:Securable ) ]  ;    # restriction not recognized by the kernel
+#	.
+dskern:Min1.accessParent a owl:Restriction ;
+    owl:onProperty dskern:accessParent ;
+    owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+    .
+dskern:Constituent a dskern:Policy ;
+#    rdfs:subClassOf dskern:Constituent.RequireComposer ;   # see above note
+	rdfs:subClassOf dskern:Min1.accessParent ;
+	dskern:disjointWith dskern:Securable ;
+    rdfs:label "Constituent"@en ;
+    rdfs:comment "A class of constituents"@en ;
+    dskern:command.ADD dskern:ConstituentAdd ;
+    dskern:command.CLONE dskern:ConstituentClone ;
+    dskern:command.DELETE dskern:ConstituentDelete ;
+    dskern:command.MODIFY dskern:ConstituentModify ;
+    dskern:command.REMOVE dskern:ConstituentModify ;
+    dskern:command.INSERTTRIPLE dskern:ConstituentModify ;
+    dskern:command.DELETETRIPLE dskern:ConstituentModify ;
+    dskern:command.LOCK dskern:ConstituentLock ;
+	.
+
+## ADD - track so we can resolve parentage during a transaction
+dskern:ConstituentAdd a dskern:Function ;
+	dskern:signature dskern:AddCommandSignature;
+    rdfs:label "ConstituentAdd"@en ;
+	rdfs:comment "Add a constituent element."@en ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.policies.composition.Constituency$Add> ;
+    .
+<java:com.dassault_systemes.rdfplatform.policies.composition.Constituency$Add>  a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+## CLONE
+dskern:ConstituentClone a dskern:Function ;
+	dskern:signature dskern:CloneCommandSignature;
+    rdfs:label "ConstituentClone"@en ;
+	rdfs:comment "Clone a constituent element."@en ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.policies.composition.Constituency$Clone> ;
+    .
+<java:com.dassault_systemes.rdfplatform.policies.composition.Constituency$Clone>  a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+## DELETE
+dskern:ConstituentDelete a dskern:Function ;
+	dskern:signature dskern:DeleteCommandSignature ;
+    rdfs:label "ConstituentDelete"@en ;
+	rdfs:comment "Delete a constituent element."@en ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.policies.composition.Constituency$Delete>  ;
+    .
+<java:com.dassault_systemes.rdfplatform.policies.composition.Constituency$Delete> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+## MODIFY
+dskern:ConstituentModify a dskern:Function ;
+	dskern:signature dskern:ModifyCommandSignature ;
+    rdfs:label "TenantModify"@en ;
+	rdfs:comment "Modify a constituent element."@en ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.policies.composition.Constituency$Modification> ;
+    .
+<java:com.dassault_systemes.rdfplatform.policies.composition.Constituency$Modification> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+	.
+## LOCK
+dskern:ConstituentLock a dskern:Function ;
+	dskern:signature dskern:LockCommandSignature ;
+    rdfs:label "ConstituentLock"@en ;
+	rdfs:comment "Lock prevention for a constituent element."@en ;
+    dskern:implementation <java:com.dassault_systemes.rdfplatform.policies.composition.Constituency$Unsupported> ;
+    .
+<java:com.dassault_systemes.rdfplatform.policies.composition.Constituency$Unsupported> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+## TRIGGER accessParent test
+dskern:Trigger.TestParentAccess a dskern:ActionTriggerFunction ; 
+    rdfs:label "parentage change of compositional predicate" ;
+	dskern:signature dskern:Placeholder ;
+    dskern:implementation  <java:com.dassault_systemes.rdfplatform.policies.composition.Constituency$TestParentAccess> ;
+	.
+<java:com.dassault_systemes.rdfplatform.policies.composition.Constituency$TestParentAccess>  a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:Constituent
+	dskern:objectTrigger.CONNECT     dskern:Trigger.TestParentAccess ;
+    dskern:objectTrigger.DISCONNECT  dskern:Trigger.TestParentAccess ;
+    dskern:objectTrigger.MODIFY      dskern:Trigger.TestParentAccess ;
+	.
+## ERRORS  
+dskern:ErrorMsg.Cmd.ConsitituentDisallowed a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "%s is disallowed on constituent %s"@en ;
+    .  		
+dskern:ErrorMsg.Cmd.ConsitituentAlone a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "%s cannot be applied directly to constituent %s"@en ;
+    .
+dskern:ErrorMsg.Cmd.ConsitituentNotOneComposee a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "The Composer %s for Constituent %s must be one of (%s) (found %s)"@en ;
+    .
+dskern:ErrorMsg.Cmd.NoCompositionalPredicate a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "No referring triple found for Constituent (?Composee ?p %s . ?p a %s)"@en ;
+    .
+dskern:ErrorMsg.Cmd.ConsitituentInvalidParent a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "%s is not one of (%s) and cannot be a Composer for the Constituent %s"@en ;
+    .
+dskern:ErrorMsg.Cmd.ReparentingDisallowed a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Moving constituent %s to another parent is not allowed"@en ;
+    .

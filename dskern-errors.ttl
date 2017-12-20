@@ -1,0 +1,934 @@
+# 12-may-2016 - jfa - corrected issues found by xturtle
+# 25-apr-2016 - hny - Synchro errors
+# 19-apr-2016 - kpu - remove references to dsM3/M2/M1/M0
+# 6-oct-2015 - kpu - turtle for all error messages in the kernel
+
+# Names spaces for the Corpus
+@prefix dskern:    <http://www.3ds.com/RDF/Corpus/Kernel/> .
+
+#declare all the error messages here...
+dskern:ErrorMsg.Cmd.Empty a dskern:ErrorMsg ;
+    dskern:errorType dskern:Warning ;
+    dskern:errorString "Input command is a blank string. Nothing to process"@en ;
+    .
+dskern:ErrorMsg.Cmd.Parsing a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Command parsing failed: '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.Execution a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Command execution failed: '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.ResourceIsATerminalNode a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Resource '%s' is only referenced as a terminal node"@en ;
+    .
+dskern:ErrorMsg.Cmd.ResourceNotReferenced a dskern:ErrorMsg ; 
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Resource '%s' is not referenced in any available graph"@en ;
+    .
+dskern:ErrorMsg.Cmd.Unavailable a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "'%s' command for '%s' is unavailable"@en ;
+    .
+dskern:ErrorMsg.Cmd.Unrecognized a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "'%s' command is unknown"@en ;
+    .
+dskern:ErrorMsg.Cmd.ConsoleCmdUnavailable a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Command  '%s' is unavailable"@en ;
+    .
+dskern:ErrorMsg.Cmd.SubjectSyntax a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Syntax error with command '%s'. Missing '}' in subject '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.NestedSyntax a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Syntax error in nested command '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.MissingArgs a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Missing 1st argument in command '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.MandArgs a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Missing value for mandatory arguments '%s' in command '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.PropertyFormat a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Properties section '%s' is not in turtle format in command"@en ;
+    .
+dskern:ErrorMsg.Cmd.PropertyParsing a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Error '%s' in tokenizing properties '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.WhereClauseUnsupported a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Where Clause not supported by command '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.WithGraphUnsupported a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "With Graph not supported by command '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.WhereClauseFormat a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Incorrect format for where clause '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.OptionUnsupported a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unsupported options '%s' in command"@en ;
+    .
+dskern:ErrorMsg.Cmd.OptionNull a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Value missing for option '%s' in command"@en ;
+    .
+dskern:ErrorMsg.Cmd.TokenUnsupported a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unsupported token '%s' in command"@en ;
+    .
+dskern:ErrorMsg.Cmd.IncompatibleOptions a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Options '%s' and '%s' in command are incompatible"@en ;
+    .
+dskern:ErrorMsg.Cmd.UnrecognizedReturnType a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unrecognized -returntype option: '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.NestedCmdNull a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Nested command '%s' returned <null>"@en ;
+    .
+dskern:ErrorMsg.Cmd.NestedCmdBinding a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Nested command '%s' %s reply cannot be bound for use"@en ;
+    .
+dskern:ErrorMsg.Cmd.WhereClauseReplyEmpty a dskern:ErrorMsg ;
+    dskern:errorType dskern:Warning ;
+    dskern:errorString "Empty reply for where clause '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.WhereClauseReplyNull a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Empty reply for where clause '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.SubjectNotResolved a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Subject '%s' cannot be resolved"@en ;
+    .
+dskern:ErrorMsg.Cmd.PrefixNotResolved a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unresolved prefix name%s in %s (did you forget enclosing brackets '<' & '>' for unprefixed URI?)"@en ;
+    .
+dskern:ErrorMsg.Cmd.SubjectNotSingular a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Command execution requires a singular subject"@en ;
+    .
+dskern:ErrorMsg.Cmd.NodeNotResource a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Node '%s' is not a resource"@en ;
+    .
+dskern:ErrorMsg.Cmd.EmptyBindVar a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Empty bind variables are not supported"@en ;
+    .
+dskern:ErrorMsg.Cmd.BoundNodeACollection a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Bound node '%s' cannot be bound to a collection"@en ;
+    .
+dskern:ErrorMsg.Cmd.BoundNodeAnIterator a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Bound node '%s' cannot be bound to an iterator"@en ;
+    .
+dskern:ErrorMsg.Cmd.BoundNodeNotANode a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Node %s is not bound to an Node"@en ;
+    .
+dskern:ErrorMsg.Cmd.VarRebound a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Bound variable %s already resolved"@en ;
+    .
+dskern:ErrorMsg.Cmd.SparqlFormat a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Command '%s' is malformed. Missing { <value> }"@en ;
+    .
+dskern:ErrorMsg.Cmd.SparqlWithGraph a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "WITH GRAPH tokens must appear in commands together"@en ;
+    .
+dskern:ErrorMsg.Cmd.NoWithGraph a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "WITH GRAPH tokens must be followed by a graph URI"@en ;
+    .
+dskern:ErrorMsg.Cmd.PrepStmtNotParsed a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Failed to parse command"@en ;
+    .
+dskern:ErrorMsg.Cmd.PrepStmtValueFormat a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Value format not accepted. Should be a null if mutable"@en ;
+    .
+dskern:ErrorMsg.Cmd.ContainerOper a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "'%s' command requires an index related predicate"@en ;
+    .
+dskern:ErrorMsg.Cmd.ContainerInvalidIdx a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Index  '%s' was invalid, duplicated or unmatched"@en ;
+    .
+dskern:ErrorMsg.Cmd.ContainerInvalidTarget a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Target object was invalid or unmatched"@en ;
+    .
+dskern:ErrorMsg.Cmd.MissingRes a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "'%s' requires a function URI to operate on"@en ;
+    .
+dskern:ErrorMsg.Cmd.DeployRql a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "The -rql option '%s' should resolve to a directory in the local filesystem"@en ;
+    .
+dskern:ErrorMsg.Cmd.DeployFileMask a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Deploy command requires a file mask."@en ;
+    .
+dskern:ErrorMsg.Cmd.AlreadyDeployedToGlobal a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "The module %s is currently deployed to the Global Admin Graph. It cannot be deployed to a tenant admin graph."@en ;
+    .
+dskern:ErrorMsg.Cmd.RequiresPrefixList a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "%s command requires at least one vocabulary URI or prefix."@en ;
+    .
+dskern:ErrorMsg.Cmd.RequiresURIList a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "%s command requires at least one URI."@en ;
+    .
+dskern:ErrorMsg.Cmd.RequiresFileList a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "%s command requires at least one file name."@en ;
+    .
+dskern:ErrorMsg.Cmd.RequiresAppName a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "%s command requires an app name."@en ;
+    .
+dskern:ErrorMsg.Cmd.FileRequiresOwlOntology a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "File '%s' requires an owl:Ontology definition."@en ;
+    .
+dskern:ErrorMsg.Cmd.FileRequiresShapes a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "File '%s' requires a dskern:Shapes definition."@en ;
+    .
+dskern:ErrorMsg.Cmd.FileMissingIsDefinedBy a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "File '%s' (combined with all of its fragment files) has subject '%s' with missing or incorrect isDefinedBy property."@en ;
+    .
+dskern:ErrorMsg.Cmd.VocabPrefixNotFound a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Vocabulary prefix %s not found."@en ;
+    .
+dskern:ErrorMsg.Cmd.VocabURINotFound a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Vocabulary URI %s not found."@en ;
+    .
+dskern:ErrorMsg.Cmd.VocabTokenError a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Not a valid token for an RDF term: %s, line %s, col %s."@en ;
+    .
+dskern:ErrorMsg.Cmd.VocabUndefinedPrefixError a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Undefined prefix: %s, line %s, col %s."@en ;
+    .
+dskern:ErrorMsg.Cmd.VocabCoreCannotBeUndeployed a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Core vocabulary %s is not allowed to be undeployed."@en ;
+    .
+dskern:ErrorMsg.Cmd.OlderVersionCannotBeDeployed a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Cannot deploy an older vocabulary version %s than the current version %s."@en ;
+    .
+dskern:ErrorMsg.Cmd.VocabularyVersionMissing a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Cannot redeploy without %s being set to %s."@en ;
+    .
+dskern:ErrorMsg.Cmd.VocabularyVersionMismatch a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Cannot redeploy because %s has value %s instead of %s."@en ;
+    .
+dskern:ErrorMsg.Cmd.MissingVersionProperty a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Vocabulary definition is missing the %s property."@en ;
+    .
+dskern:ErrorMsg.Cmd.VersionPropertySameAsVocabulary a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Vocabulary URI cannot be the value of the %s property."@en ;
+    .
+dskern:ErrorMsg.Cmd.PriorVersionMustMatchCurrentVersion a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "The owl:priorVersion property value must match the current version %s."@en ;
+    .
+dskern:ErrorMsg.Cmd.VersionPropertyValueDoesNotExist a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "The %s property value %s does not exist."@en ;
+    .
+dskern:ErrorMsg.Cmd.ClassRequiresPropery a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "The class %s is missing the property %s."@en ;
+    .
+dskern:ErrorMsg.Cmd.GetRjsSCPath a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unable to get the source code from the model for module '%s'."@en ;
+    .
+dskern:ErrorMsg.Cmd.GetRjsCreateDir a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unable to create %s directory '%s' on local machine."@en ;
+    .
+dskern:ErrorMsg.Cmd.ListInvalidSubject a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Identified subject list is empty"@en ;
+    .
+dskern:ErrorMsg.Cmd.InvalidSubject a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Cannot operate on a NIL list - ADD a new empty list first"@en ;
+    .
+dskern:ErrorMsg.Cmd.InvalidPredicate a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "NULL predicate provided in command line"@en ;
+    .
+dskern:ErrorMsg.Cmd.IllformedLiteral a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Poorly formed Literal '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.IncorrectFilePath a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Incorrect filepath '%s' specified"@en ;
+    .
+dskern:ErrorMsg.Cmd.IncorrectDirectory a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "'%s' is not a valid directory"@en ;
+    .
+dskern:ErrorMsg.Cmd.ShowFormat a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "'%s' is not a printable console value"@en ;
+    .
+dskern:ErrorMsg.Cmd.UndeployModule a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Undeploy command requires a module name"@en ;
+    .
+dskern:ErrorMsg.Cmd.BulkLoadFailure a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Bulk loading failed! Only N-Triple format supported"@en ;
+    .
+dskern:ErrorMsg.Cmd.BulkLoadMissing a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Bulk import failed. %s file does not exist"@en ;
+    .
+dskern:ErrorMsg.Cmd.ComposeeDeleteFail a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Delete on Composee '%s' failed"@en ;
+    .
+dskern:ErrorMsg.Cmd.IllegalGraph a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Cannot insert blank %s node bound to graph '%s' into '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.UnboundNode a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Node '%s' is not bound to an active graph"@en ;
+    .
+dskern:ErrorMsg.Cmd.ResourceExists a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "An existing resource '%s' already exists as a typed subject"@en ;
+    .
+dskern:ErrorMsg.Cmd.URIExhausted a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unable to locate a unique URI for a new '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.UnmatchedValue a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Instance '%s' already exists.  Existing direct value for property '%s' does not match '%s'"@en ;
+    .
+dskern:ErrorMsg.Cmd.UnexpectedArgFormat a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unexpected argument format: %s"@en ;
+    .
+dskern:ErrorMsg.Cmd.OpenTransaction a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Transaction for command '%s' was left open. Please close the last transaction before starting a new one"@en ;
+   .
+dskern:ErrorMsg.Cmd.ActiveTxnAborted a dskern:ErrorMsg ;
+    dskern:errorType dskern:Warning ;
+    dskern:errorString "The active transaction has been aborted.  No pending changes will be stored."@en ;
+   .
+dskern:ErrorMsg.AccessItem.Unknown a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Unknown AccessItem subclass '%s' belonging to AccessRule '%s'"@en ;
+    .
+dskern:ErrorMsg.AccessRule.Denied a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "%s is denied on %s"@en ;
+    .
+dskern:ErrorMsg.Get.MoreThanOne a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "GET cannot handle results which have loaded more than one Resource"@en ;
+    .
+dskern:ErrorMsg.Get.RetMoreThanOne a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Functional predicate %s returned more than one element"@en ;
+    .
+dskern:ErrorMsg.Get.MoreThanOnePred a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "More than one predicate has been requested for %s and cannot be returned as single"@en ;
+    .
+dskern:ErrorMsg.GraphResult.MultipleResources a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Graph has loaded more than one Resource and cannot be returned as a %s"@en ;
+    .
+dskern:ErrorMsg.GraphResult.MultipleProperties a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "More than one property has been %s for %s cannot be returned as a %s"@en ;
+    .
+dskern:ErrorMsg.GraphResult.NonFuncProp a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Non-Functional predicate %s cannot be returned as single element"@en ;
+    .
+dskern:ErrorMsg.Get.NonFuncProp a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Non-Functional predicate %s cannot be returned as single element"@en ;
+    .
+dskern:ErrorMsg.GraphResult.FuncProp a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Functional predicate %s returned %s values"@en ;
+    .
+dskern:ErrorMsg.GraphResult.AddGraphs a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Graphs must be added to other Graphs"@en ;
+    .
+dskern:ErrorMsg.Properties.SetPwd a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Cannot set password for '%s'"@en ;
+    .
+dskern:ErrorMsg.Securable.UserNotPerson a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "%s is not a person"@en ;
+    .
+dskern:ErrorMsg.Securable.PwdRequired a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Password required"@en ;
+    .
+dskern:ErrorMsg.Securable.PwdIncorrect a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Password incorrect"@en ;
+    .
+dskern:ErrorMsg.Securable.RoleNotSC a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "%s is not a SecurityContext"@en ;
+    .
+dskern:ErrorMsg.Securable.RoleNotAssigned a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Security : %s is not an assignment of %s"@en ;
+    .
+dskern:ErrorMsg.Securable.NotTenant a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "%s is not a Tenant"@en ;
+    .
+dskern:ErrorMsg.Securable.TenantNotAssigned a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "%s does not belong to tenant %s"@en ;
+    .
+dskern:ErrorMsg.Securable.RequiresAdminRole a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Security : Function requires Administrator role"@en ;
+    .
+dskern:ErrorMsg.Securable.RequiresGlobalAdminRole a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Security : Function requires Global Administrator role"@en ;
+    .
+dskern:ErrorMsg.Validation.MissingProp a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "%s missing property %s"@en ;
+    .
+dskern:ErrorMsg.Validation.NotInDomain a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Subject %s is not in the domain for predicate %s"@en ;
+    .
+dskern:ErrorMsg.Validation.NotInRange a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Object %s is not in the range for predicate %s"@en ;
+    .
+dskern:ErrorMsg.Validation.MemberNotInRange a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Member object %s is not in the range for predicate %s"@en ;
+    .
+dskern:ErrorMsg.Validation.OneValueReq a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "At least one triple {%s} is required by %s"@en ;
+    .
+dskern:ErrorMsg.Validation.InvalidSomeVal a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "At least one match of {%s a %s . %s} is required by %s"@en ;
+    .
+dskern:ErrorMsg.Validation.InvalidAllVal a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Triple {%s} violates allvalue restriction %s"@en ;
+    .
+dskern:ErrorMsg.Validation.ValReq a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "%s triple(s) required for {%s} by %s"@en ;
+    .
+dskern:ErrorMsg.Validation.SomeValReq a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "At least %s triple(s) required for {%s} by %s"@en ;
+    .
+dskern:ErrorMsg.Validation.NoMoreThan a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "No more than %s triple(s) allowed for {%s} by %s"@en ;
+    .
+dskern:ErrorMsg.Validation.Functional a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Functional predicate (%s %s ?) must be unique"@en ; 
+	.
+dskern:ErrorMsg.Validation.NLSFunctional a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "NLS Functional predicate (%s %s ?) must be unique for language %s"@en ; 
+	.
+dskern:ErrorMsg.Invoke.EvalJavaCode a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Unable to evaluate Java code for function '%s'"@en ; 
+    .
+dskern:ErrorMsg.Invoke.EvalJsCode a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Unable to evaluate JS code for module '%s'"@en ; 
+	.
+dskern:ErrorMsg.Invoke.RestrictedClassUse a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Javascript code for module '%s' uses a restricted class or package: %s."@en ; 
+	.	
+dskern:ErrorMsg.Invoke.BuildNamespace a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Unable to build namespace hierarchy for module '%s': %s"@en ;
+	.
+dskern:ErrorMsg.Invoke.EvalBaseScripts a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Unable to eval base scripts when building clean ScriptEngine: %s"@en ;
+	.	
+dskern:ErrorMsg.Invoke.FindJsCode a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Unable to find JS code for module '%s'"@en ;
+	.
+dskern:ErrorMsg.Invoke.CantFindFn a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unable to find function in the model: %s%s"@en ;
+	.
+dskern:ErrorMsg.Invoke.NoSuchFnInModule a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "The module %s has no public function named '%s'"@en ;
+	.
+dskern:ErrorMsg.Invoke.EmptyModulePool a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "The ModulePool for module '%s' is empty. There may have been an exception when loading it."@en ;
+	.
+dskern:ErrorMsg.Invoke.UnclosedIterator a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "The procedure %s has an unclosed iterator. Use a finally{ } block to ensure the iterator gets closed."@en ;
+	.
+dskern:ErrorMsg.Invoke.BadImplUri a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Insufficient information in URI to resolve module and method: %s."@en ;
+	.
+dskern:ErrorMsg.Invoke.GetFromPool a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Unable to get module '%s' from pool"@en ;
+    .
+dskern:ErrorMsg.Invoke.PutBackToPool a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Unable to put module '%s' back to pool"@en ;
+    .
+dskern:ErrorMsg.Invoke.CantFindPool a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unable to find JavascriptModulePool for module named: %s"@en ;
+	.
+dskern:ErrorMsg.Invoke.UnknownProtocol a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unrecognized protocol for function impl:  %s"@en ;
+	.
+dskern:ErrorMsg.Invoke.MissingFnRef a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "InvokerFactory: passed null or empty fnRef to InvokerFactory.get()"@en ;
+	.
+dskern:ErrorMsg.Invoke.Async.Http.DataEncoding a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Request to endpoint %s includes data that cannot be encoded as %s."@en ;
+	.
+dskern:ErrorMsg.Rjs.UnmatchedAs a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Rjs Error : Unmatched token in 'AS' expression: %s does not have matching %s ."@en ;
+    .
+dskern:ErrorMsg.Rjs.Formatting a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Rjs Error : Improperly formatted 'AS' map expression: %s"@en ;
+    .
+dskern:ErrorMsg.Rjs.IllegalAsEpr a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Rjs Error : Illegal 'AS' expression: %s"@en ;
+    .
+dskern:ErrorMsg.Rjs.IllegalChar a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Rjs Error : Illegal character used for list index: %s"@en ;
+    .
+dskern:ErrorMsg.Rjs.IllegalVarAssn a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Rjs Error : Illegal variable assignment within AS statement: attempt to use the variable name to which the RJS expression is assigned."@en ;
+    .
+dskern:ErrorMsg.Rjs.UnableToDeployFileMissing a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Rjs Error :Unable to deploy module %s. Could not find a matching file."@en ;
+    .
+dskern:ErrorMsg.Rjs.UnableToDeployAmbiguous a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Rjs Error :Unable to deploy module %s. Too many files matching module name."@en ;
+    .
+dskern:ErrorMsg.Rjs.UnableToDeploy a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Rjs Error :Unable to deploy module %s. File %s not found ."@en ;
+    .
+dskern:ErrorMsg.Rjs.MethodWithImplDeleted a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Method %s has been deleted, but has an implementation %s in module %s"@en ;
+    .
+dskern:ErrorMsg.Rjs.UnableToValidate a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Unable to validate redeploy of module %s"@en ;
+    .
+dskern:ErrorMsg.Rjs.EmptyDataypeOrLangTag a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Cannot create literal '%s' with empty datatype or language tag."@en ;
+    .
+dskern:ErrorMsg.Rjs.NotALiteral a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Argument passed to function is not a Literal Node."@en ;
+    .
+dskern:ErrorMsg.Rjs.BlankNode a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Object of triple is a blank Node."@en ;
+    .
+dskern:ErrorMsg.Rjs.ExtractPrimitive a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unable to convert primitive value because value is null."@en ;
+    .
+dskern:ErrorMsg.Rjs.MultivalueResult a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Cannot extract as Single value -- there are more than one values in the result."@en ;
+    .
+dskern:ErrorMsg.RjsParsing.GetType a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Rjs Parsing Error '%s' : Unable to get the type of the function from the comments ."@en ;
+    .
+dskern:ErrorMsg.RjsParsing.InvalidSign a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Rjs Parsing Error '%s' : Invalid Signature arguments: %s. Ensure order and number and name (including case) of @param match signature arguments."@en ;
+    .
+dskern:ErrorMsg.RjsParsing.BadReference a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Resource '%s' referred to by '%s' in '%s' is not available"@en ;
+    .
+dskern:ErrorMsg.RjsParsing.MalformedParam a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Malformed @param in signature: %s"@en ;
+    .
+dskern:ErrorMsg.Revise.NotLastInfamily a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Revise error : %s is not last in revision family"@en ;
+    .
+dskern:ErrorMsg.Revise.MissingProp a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Revise error : Missing property '%s'"@en ;
+    .
+dskern:ErrorMsg.Revise.IncomplQuery a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Revise error : incomplete query result"@en ;
+.
+dskern:ErrorMsg.CmdResult.Conversion a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "%s does not support conversion to a %s"@en ;
+.
+dskern:ErrorMsg.CmdResult.Combined a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "This result cannot be combined with additional results"@en ;
+.
+dskern:ErrorMsg.CmdResult.UnrecognizedType a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unrecognized result type '%s'"@en ;
+.
+dskern:ErrorMsg.CmdResult.InValid a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "%s contains more than one %s and cannot be returned as %s"@en ;
+.
+dskern:ErrorMsg.CmdResult.NullResult a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Command Result Error : NULL cannot be natively interpreted as a %s"@en ;
+.
+dskern:ErrorMsg.ZooKeeper.LockErr a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Zookeeper Error : Zookeeper resource lock error : %s"@en ;
+.
+dskern:ErrorMsg.ZooKeeper.ReleaseErr a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Zookeeper Error : Zookeeper resource lock release error : %s"@en ;
+.
+dskern:ErrorMsg.Cmd.GraphNotFound a dskern:ErrorMsg ;
+    dskern:errorType dskern:Warning ;
+    dskern:errorString "Graph %s was not found in the list of accessible graphs"@en ;
+    .
+dskern:ErrorMsg.Cmd.GraphNotAllowed a dskern:ErrorMsg ;
+    dskern:errorType dskern:Warning ;
+    dskern:errorString "%s command not allowed on graph %s"@en ;
+    .
+dskern:ErrorMsg.Cmd.ActiveGraphNotAllowed a dskern:ErrorMsg ;
+    dskern:errorType dskern:Warning ;
+    dskern:errorString "%s command not allowed on active graph"@en ;
+    .
+dskern:ErrorMsg.Cmd.TypeNotAllowed a dskern:ErrorMsg ;
+    dskern:errorType dskern:Warning ;
+    dskern:errorString "%s command not allowed on type %s"@en ;
+    .
+dskern:ErrorMsg.General.UnsupportedOperation a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "'%s' is not currently supported"@en ;
+    .
+dskern:ErrorMsg.Cmd.TenantNotAllowed a dskern:ErrorMsg ;
+    dskern:errorType dskern:Warning ;
+    dskern:errorString "%s command not allowed on tenant %s"@en ;
+	.
+dskern:ErrorMsg.Cmd.TenantNotAllowedBecauseUsersBelongToTenant a dskern:ErrorMsg ;
+    dskern:errorType dskern:Warning ;
+    dskern:errorString "%s command not allowed because users belong to tenant %s"@en ;
+	.
+dskern:ErrorMsg.Cmd.BlockedForBaseline a dskern:ErrorMsg ;
+    dskern:errorType dskern:Warning ;
+    dskern:errorString "Updates are blocked until the active BASELINE completes"@en ;
+	.
+dskern:ErrorMsg.Import.InvalidPrefix a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Invalid prefix '%s' at line '%s'"@en ;
+    .
+dskern:ErrorMsg.Import.InvalidFormat a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Invalid format to import '%s' at line '%s'"@en ;
+    .    
+dskern:ErrorMsg.Import.InvalidPath a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Invalid path '%s' of file to import"@en ;
+    .      
+dskern:ErrorMsg.Import.GenericError a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Import of '%s' failed due to '%s' at line '%s'"@en ;
+    .    
+dskern:ErrorMsg.Import.TokenizerError a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Import of '%s' failed due to syntax error at '%s'"@en ;
+    .        
+dskern:ErrorMsg.Patch.InvalidObject a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Invalid object denoted by path"@en ;
+    . 
+dskern:ErrorMsg.Patch.InvalidPath a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Invalid path '%s'"@en ;
+    .  
+dskern:ErrorMsg.Patch.InvalidPathAt a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Invalid path '%s' at '%s'"@en ;
+    .  
+dskern:ErrorMsg.Patch.InvalidPathToken a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Invalid path token '%s'"@en ;
+    .   
+dskern:ErrorMsg.Patch.InvalidIndex a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Invalid path index step '%s'"@en ;
+    .  
+dskern:ErrorMsg.Patch.UnterminatedPath a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Path is not properly terminated '%s'"@en ;
+    .    
+dskern:ErrorMsg.Patch.TerminatedPath a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Invalid path already terminated at '%s'"@en ;
+    .    
+dskern:ErrorMsg.Patch.NoIndexOrAppend a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Resource '%s' cannot be indexed or appended to"@en ;
+    .    
+dskern:ErrorMsg.Patch.FunctionalTooMany a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Functional predicate '%s' cannot accept multiple values"@en ;
+    .   
+dskern:ErrorMsg.Patch.FunctionalAppend a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Functional predicate '%s' does not support the append action"@en ;
+    .
+dskern:ErrorMsg.Patch.MatchingNotFound a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Matching element not found"@en ;
+    . 
+dskern:ErrorMsg.Patch.CannotInsertMultiple a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Path target cannot insert multiple objects"@en ;
+    . 
+dskern:ErrorMsg.Cmd.ListImmutable a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Lists are closed and cannot be modified"@en ;
+    .
+dskern:ErrorMsg.pGraph.Edit.NotSupported a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Cannot edit predicate table associated to %s: try working with a more detailed sub pGraph"@en ;
+    .
+dskern:ErrorMsg.pGraph.Edit.Offline a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Cannot edit predicate table associated to %s: %s is offline"@en ;
+    .
+dskern:ErrorMsg.pGraph.Load.Access a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Cannot load %s: %s"@en ;
+    .
+dskern:ErrorMsg.SynchronizationServices a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Invalid Synchronisation configuration: %s"@en ;
+    .
+dskern:ErrorMsg.SynchronizationServices.Undef a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "%s service is not defined"@en ;
+    .
+dskern:ErrorMsg.SynchronizationServices.Pending a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Impossible to %s: pending changes %s"@en ;
+    .
+dskern:ErrorMsg.SynchronizationServices.Unsupported a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unsupported change: %s"@en ;
+    .
+#dskern:ErrorMsg.SynchronizationServices.Untracked a dskern:ErrorMsg ;
+#    dskern:errorType dskern:SystemError ;
+#    dskern:errorString "The context graph is containing some untracked changes, therefore cannot be synhronized"@en ;
+#    .
+dskern:ErrorMsg.SynchronizationServices.Http a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Http request failed, %s: %s"@en ;
+    .
+dskern:ErrorMsg.Cmd.PrefixAlreadyExists a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "%s prefix %s already exists"@en ;
+    .
+dskern:ErrorMsg.Cmd.PrefixURIAlreadyExists a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "%s URI %s already exists for prefix %s"@en ;
+    .
+dskern:ErrorMsg.Cmd.PrefixNotAllowedOnGraph a dskern:ErrorMsg ;
+    dskern:errorType dskern:Warning ;
+    dskern:errorString "Cannot use %s PREFIX command on graph %s"@en ;
+    .
+dskern:ErrorMsg.Cmd.PrefixesTransientPrefixNotAllowed a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "%s prefix %s cannot be a transient prefix"@en ;
+    .
+dskern:ErrorMsg.Cmd.PrefixesTransientURINotAllowed a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "%s URI %s cannot be a transient URI"@en ;
+    .
+dskern:ErrorMsg.Search.AppenderNotEnabled a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Search service appender has not been enabled"@en ;
+    .
+dskern:ErrorMsg.Serializer.FormatUnavailable a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Cannot use %s format : librairies not available"@en ;
+    .
+dskern:ErrorMsg.Serializer.FileSystem.Write a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Unable to write triples to %s"@en ;
+    .
+dskern:ErrorMsg.Serializer.FileSystem.Missing a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Using %s format requires to specify an output file (-FILE option)"@en ;
+    .
+dskern:ErrorMsg.Serializer.FileSystem.AppendNotSupported a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "%s format does not support append"@en ;
+    .
+dskern:ErrorMsg.Datatype.InheritanceInconsitency a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "%s datatype is not correctly defined"@en ;
+    .
+dskern:ErrorMsg.Shacl.MalformedPath a dskern:ErrorMsg ;
+    dskern:errorType dskern:Notice ;
+    dskern:errorString "Malformed Shacl property path %s"@en ;
+    .
+dskern:ErrorMsg.Cmd.PropertyFunctionNotAllowed a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Property function '%s' cannot be used with %s"@en ;
+    .
+dskern:ErrorMsg.Session.Timeout a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Timeout during with context generation for session id '%s'"@en ;
+    .    
+dskern:ErrorMsg.Cmd.NotSupportedByDriver a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "%s not supported by driver %s"@en ;
+    .    
+dskern:ErrorMsg.Cmd.FixedTriple a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Triples matching (%s %s %s) cannot be modified"@en ;
+    . 
+dskern:ErrorMsg.Cmd.InvalidIdentifier a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Invalid blank node identifier: %s. "@en ;
+    . 
+dskern:ErrorMsg.Mask.RangeMemberUnresolvable a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unable to resolve the range of the members of the property %s."@en ;
+    . 
+dskern:ErrorMsg.Mask.Missing a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "No mask found matching '%s' in accessible admin graphs."@en ;
+    .
+dskern:ErrorMsg.Mask.MissingForProperty a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Could not find mask for property  '%s'."@en ;
+    .
+dskern:ErrorMsg.Mask.MissingPropertyKey a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "No property key '%s' in mask %s."@en ;
+    . 
+dskern:ErrorMsg.Mask.NotAProperty a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "%s is not an rdf:Property."@en ;
+    . 
+dskern:ErrorMsg.Mask.NotAMask a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "No mask found matching '%s' in accessible admin graphs."@en ;
+    . 
+dskern:ErrorMsg.Mask.MalformedMask a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Malformed dskern:Mask %s: dskern:Property %s has no dskern:property."@en ;
+    . 
+dskern:ErrorMsg.Mask.Instantiation a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unable to load mask '%s' due to exception on instantiating the Mask: %s."@en ;
+    . 
+dskern:ErrorMsg.PropertyFunction.InvalidSelect a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "SELECT based property function <%s> isn't of type Simple, SimpleAndList, ListAndSimple or List."@en ;
+    .
+dskern:ErrorMsg.PropertyFunction.UnableResolve a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Unable to resolve implementation for property function <%s>."@en ;
+    .
+dskern:ErrorMsg.PropertyFunction.RequiredProjectVar a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Projection variable ?%s is required in SELECT based property function."@en ;
+    .
+dskern:ErrorMsg.PropertyFunction.InvalidArgListSize a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Invalid argument list size as %s: %d. Expected: %d"@en ;
+    .
+ 

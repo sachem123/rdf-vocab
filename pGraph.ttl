@@ -1,0 +1,74 @@
+# 26-may-2017 - jfa - pCriteria no longer dskern:Sparse
+# 12-may-2016 - jfa - corrected issues found by xturtle
+# 25-apr-2016 - hny - cmd:Synchronize
+# 19-apr-2016 - kpu - remove references to dsM3/M2/M1/M0
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfg:    <http://www.w3.org/2004/03/trix/rdfg-1/> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix dskern:    <http://www.3ds.com/RDF/Corpus/Kernel/> .
+
+# pGraph classes properties (Tbox) / subject to schemas validation
+################################################################################
+
+dskern:subSubjectGraphOf a owl:FunctionalProperty ;
+    .
+dskern:Restriction.subSubjectGraphOf.pDomain a owl:Class ; 
+    owl:unionOf (dskern:pGraph dskern:pConfig) ;
+    .
+dskern:pGraph a rdfs:Class ;
+	rdfs:subClassOf dskern:Graph, [ 
+        a owl:Restriction ;
+        owl:onProperty dskern:subSubjectGraphOf ;
+        owl:cardinality "1"^^xsd:nonNegativeInteger ;
+    ], [ 
+        a owl:Restriction ;
+        owl:onProperty dskern:subSubjectGraphOf ;
+        owl:allValuesFrom dskern:Restriction.subSubjectGraphOf.pDomain ;
+    ] ;
+    .
+dskern:pCriteria a owl:AnnotationProperty ;
+    rdfs:domain rdfs:Class ;
+    #rdfs:range rdf:Property ;
+    .
+dskern:pConfig a rdfs:Class ;
+	rdfs:subClassOf dskern:Graph, [
+        a owl:Restriction ;
+        owl:onProperty rdfg:subGraphOf ;
+        owl:cardinality "1"^^xsd:nonNegativeInteger ; # pGraph-ing a Search Path is not supported yet
+    ], [
+        a owl:Restriction ;
+        owl:onProperty rdfg:subGraphOf ;
+        owl:allValuesFrom dskern:DataGraph 
+    ] ;
+    dskern:securityClearanceFor dskern:Person.Guest ;
+    .
+dskern:pBasicGraph a rdfs:Class ;
+	rdfs:subClassOf dskern:pGraph, [ 
+        a owl:Restriction ;
+        owl:onProperty dskern:subSubjectGraphOf ;
+        owl:allValuesFrom dskern:pConfig # Is allways a pGraph chain head
+    ] ;
+   dskern:pCriteria rdf:type, rdfs:subClassOf, rdfs:subPropertyOf ;
+    .
+# dskern:Restricted.subSubjectGraphOf.pBasicGraph a owl:Restriction ;
+#        owl:onProperty dskern:subSubjectGraphOf ;
+#        owl:allValuesFrom [ owl:unionOf (dskern:pBasicGraph dskern:pConfig) ] ;
+#        .
+# dsM1:MYAPP.pGraph.Simple a rdfs:Class ;
+#	 rdfs:subClassOf dskern:pGraph,
+#    dskern:isDefinedBy dskern: ;
+#     dskern:Restricted.subSubjectGraphOf.pBasicGraph ;
+#     dskern:pCriteria /* ... */ ;
+#     .
+# dsM1:MYAPP.pGraph.Detailed rdfs:subClassOf dskern:pGraph,  [ 
+#         a owl:Restriction ;
+#         owl:onProperty dskern:subSubjectGraphOf ;
+#         owl:allValuesFrom dsM1:MYAPP.pGraph.Simple
+#     ] ;
+#     dskern:pCriteria /* ... */ ;
+#    dskern:isDefinedBy dskern: ;
+#     .
+

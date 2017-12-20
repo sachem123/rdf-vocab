@@ -1,0 +1,1226 @@
+#
+# Command signatures for kernel vocabulary 
+# 24-may-2017 - hny - remove old LOAD, SHARE, REFRESH
+# 06-oct-2016 - hny - list do not apply only on rdfs:Class, but also on rdfs:Resource (usable with -PROPERTY option for traversal)
+# 06-oct-2016 - hny - list datatypes
+# 18-may-2016 - jfa - added UNSET command and PREFIXES option to IMPORT command
+# 12-may-2016 - jfa - corrected issues found by xturtle
+# 25-apr-2016 - hny - list changes
+# 19-apr-2016 - kpu - remove references to dsM3/M2/M1/M0
+# 18-apr-2016 - kpu - update export documentation 
+# 15-apr-2016 - i2m - add Move command
+# 28-mar-2016 - hny - remove LIST CONCEPTS (see dskern:concept)
+# 23-mar-2016 - hny - revise
+# 01-mar-2016 - i2m - Add Patch commands 
+# 26-feb-2016 - hny - review commands
+# 22-feb-2016 - kpu - Export selective graph(s) 
+# 22-feb-2016 - hny - dskern:ListConceptsSignature
+# 30-nov-2015 - hny - dskern:ListpGraphsSignature
+# 22-nov-2015 - i2m - introduction of push/pop commands
+# 19-nov-2015 - kpu - specific flushcache implementation
+# 06-oct-2015 - i2m - specific GET implementation
+# 08-sep-2015 - i2m - added RETURNTYPE option
+# 04-sep-2015 - kpu - Import command to have a flag for bulk loading
+# 04-sep-2015 - jfa - removed generic option to SET CONTEXT ENTAILMENT command
+# 03-sep-2015 - jfa - added generic option to SET CONTEXT ENTAILMENT command
+# 03-sep-2015 - i2m - added GET command as an alias for PRINT
+# 01-sep-2015 - kpu - seperate signature impl for different commands from definition
+
+# RDF Related
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+# P&O Using Passport & foaf 
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+
+# Names spaces for the Corpus
+@prefix dspol:    <http://www.3ds.com/RDF/Corpus/Policy/> .
+@prefix dskern:    <http://www.3ds.com/RDF/Corpus/Kernel/> .
+
+#some default options
+dskern:SignatureOption.URI a rdfs:Class , dskern:SignatureOptionWithValue ;
+    dskern:argType rdfs:Resource ;
+	dskern:commandKeywordValue "input-uri" ;
+	rdfs:label "URI" ;
+	rdfs:comment "URI to be passed as option"@en ;
+    .
+dskern:SignatureOption.PREFIX a rdfs:Class , dskern:SignatureOptionWithValue ;
+    dskern:argType xsd:string ;
+	dskern:commandKeywordValue "prefix-string" ;
+	rdfs:label "PREFIX" ;
+	rdfs:comment "PREFIX to be passed as option"@en ;
+    .
+dskern:SignatureOption.THIS a rdfs:Class , dskern:SignatureOptionWithValue ;
+    dskern:argType rdfs:Resource ;
+	dskern:commandKeywordValue "instance-uri" ;
+	rdfs:label "THIS" ;
+	rdfs:comment "The subject itself to be passed as option"@en ;
+    .
+dskern:SignatureOption.BLANK a rdfs:Class , dskern:SignatureOption ;
+	rdfs:label "BLANK" ;
+	rdfs:comment "Option to indicate if the element is a blank node"@en ;
+    .
+dskern:SignatureOption.TYPE a rdfs:Class , dskern:SignatureOptionWithValue ;
+    dskern:argType rdfs:Class ;
+	dskern:commandKeywordValue "t1,t2,..." ;
+	rdfs:label "TYPE" ;
+	rdfs:comment "Option to indicate URI of types"@en ;
+    .
+dskern:SignatureOption.SELECT a rdfs:Class , dskern:SignatureOptionWithValue ;
+	dskern:argType rdf:Property ;
+	dskern:commandKeywordValue "s1,s2,..." ;
+	rdfs:label "SELECT" ;
+	rdfs:comment "List of selectables"@en ;
+    .
+dskern:SignatureOption.FILTER a rdfs:Class , dskern:SignatureOptionWithValue ;
+	dskern:argType rdfs:Resource ;
+	dskern:commandKeywordValue "filter-uri" ;
+	rdfs:label "FILTER" ;
+	rdfs:comment "Option to provide URI to filter function"@en ;
+    .
+dskern:SignatureOption.DIRECTION a rdfs:Class , dskern:SignatureOptionWithValue ;
+	dskern:argType [ owl:oneOf ( "to" "from" ) ] ;
+	dskern:commandKeywordValue "to/from" ;
+	rdfs:label "DIRECTION" ;
+	rdfs:comment "Option to indicate direction to expand"@en ;
+    .
+dskern:SignatureOption.RECURSE a rdfs:Class , dskern:SignatureOptionWithValue ;
+	dskern:argType xsd:int ;
+	dskern:commandKeywordValue "recurse-level" ;
+	rdfs:label "RECURSE" ;
+	rdfs:comment "Option to indicate number of levels to expand"@en ;
+    .
+dskern:SignatureOption.BOUNDED a dskern:SignatureOption ;
+	rdfs:label "BOUNDED" ;
+	rdfs:comment "Option to indicate if operation should be concise bounded "@en ;
+    .
+dskern:SignatureOption.INVERSE a dskern:SignatureOption ;
+	rdfs:label "INVERSE" ;
+	rdfs:comment "Option to indicate is the direction to traverse is reverse"@en ;
+    .
+dskern:SignatureOption.SYMMETRIC a dskern:SignatureOption ;
+	rdfs:label "SYMMETRIC" ;
+	rdfs:comment "Option to indicate if operation should be symmetric concise bounded"@en ;
+    .
+dskern:SignatureOption.PREVENTDUPLICATES a dskern:SignatureOption ;
+	rdfs:label "PREVENTDUPLICATES" ;
+	rdfs:comment "Option to indicate if duplicate results are disallowed in expand"@en ;
+    .
+dskern:SignatureOption.TARGETTYPE a rdfs:Class , dskern:SignatureOptionWithValue ;
+	dskern:argType rdfs:Class ;
+	dskern:commandKeywordValue "type1,type2,..." ;
+	rdfs:label "TARGETTYPE" ;
+	rdfs:comment "Option to indicate list of URI of target types"@en ;
+    .
+dskern:SignatureOption.TARGETSELECT a rdfs:Class , dskern:SignatureOptionWithValue ;
+	dskern:argType rdf:Property ;
+	dskern:commandKeywordValue "property1,property1,..." ;
+	rdfs:label "TARGETSELECT" ;
+	rdfs:comment "Option to indicate list of URI of tatrget properties"@en ;
+    .
+dskern:SignatureOption.PROPERTY a rdfs:Class , dskern:SignatureOptionWithValue ;
+	dskern:argType rdf:Property ;
+	dskern:commandKeywordValue "property1,property1,..." ;
+	rdfs:label "PROPERTY" ;
+	rdfs:comment "Option to indicate list of URI of properties"@en ;
+    .
+dskern:SignatureOption.FORMAT a rdfs:Class , dskern:SignatureOptionWithValue ;
+    dskern:argType [ owl:oneOf ( "prefix" "len" "postfix" ) ] ;
+	dskern:commandKeywordValue "prefix/len/postfix" ;
+	rdfs:label "FORMAT" ;
+	rdfs:comment "Option to indicate autonamer format"@en ;
+    .
+dskern:SignatureOption.RETURNTYPE a rdfs:Class , dskern:SignatureOptionWithValue ;
+    dskern:argType [ owl:oneOf ( "single" "list" "iterator" "map" "mapofsingle" ) ] ;
+	dskern:commandKeywordValue "single/list/iterator/map/mapofsingle" ;
+	rdfs:label "RETURNTYPE" ;
+	rdfs:comment "Type that the data should be returned as"@en ;
+    .	
+dskern:SignatureOption.RETURNVALUE a dskern:SignatureOption ;
+	rdfs:label "RETURNVALUE" ;
+	rdfs:comment "indicates that the result should be returned as non-node literal values"@en ;
+    .	
+dskern:SignatureOption.TFORMAT a rdfs:Class , dskern:SignatureOptionWithValue ;
+    dskern:argType [ owl:oneOf ( "ams" "hdt" "ttl" ) ] ;
+	dskern:commandKeywordValue "ams/hdt/ttl" ;
+	rdfs:label "FORMAT" ;
+	rdfs:comment "Triple format to use"@en ;
+    .	
+dskern:SignatureOption.FILE a rdfs:Class , dskern:SignatureOptionWithValue ;
+    dskern:argType xsd:string ;
+	rdfs:label "FILE" ;
+	rdfs:comment "Output file where to write triples"@en ;
+    .	
+dskern:SignatureOption.TOGRAPH a rdfs:Class , dskern:SignatureOptionWithValue ;
+    dskern:argType rdfs:Resource ;
+	dskern:commandKeywordValue "graph-uri" ;
+	rdfs:label "TOGRAPH" ;
+	rdfs:comment "TOGRAPH to indicate target graph"@en ;
+    .	
+dskern:SignatureOption.MULTITYPE a dskern:SignatureOption ;
+	rdfs:label "MULTITYPE" ;
+	rdfs:comment "Allows a command to add additional types to an existing URI"@en ;
+    .
+dskern:SignatureOption.NOCHECK a dskern:SignatureOption ;
+	rdfs:label "NOCHECK" ;
+	rdfs:comment "Do not check for the resource before adding"@en ;
+    .
+#some default keywords 
+dskern:CommandKeyword.CONTEXT a dskern:CommandKeyword ;
+	rdfs:label "CONTEXT" ;
+    .
+dskern:CommandKeyword.CWD a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+	dskern:argType xsd:string ;
+	rdfs:label "CWD" ;
+	dskern:commandKeywordValue "working-dir" ;
+	rdfs:comment "Directory to set as local for all scripts"@en ;
+    .
+dskern:CommandKeyword.GRAPH a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+    dskern:argType [ owl:unionOf ( dskern:Graph dskern:pGraph) ] ;
+	rdfs:label "GRAPH" ;
+	dskern:commandKeywordValue "graph-uri" ;
+	rdfs:comment "Uri or name of the graph to set context"@en ;
+    .
+dskern:CommandKeyword.USER a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+    dskern:argType foaf:Person ;
+	rdfs:label "USER" ; 
+	dskern:commandKeywordValue "user-uri" ;
+	rdfs:comment "Uri of the foaf:Person to set context"@en ;
+    .
+dskern:CommandKeyword.PASSWORD a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+    dskern:argType xsd:string ;
+	rdfs:label "PASSWORD"  ; 
+	dskern:commandKeywordValue "user-password" ;
+	rdfs:comment "Password of the foaf:Person to set context"@en ;
+    .
+dskern:CommandKeyword.ROLE a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+    dskern:argType dskern:SecurityContext ;
+	rdfs:label "ROLE" ; 
+	dskern:commandKeywordValue "role-uri" ;
+	rdfs:comment "Uri of the foaf:Group to set context"@en ;
+    .
+dskern:CommandKeyword.TENANT a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+    dskern:argType dskern:Tenant ;
+	rdfs:label "TENANT" ; 
+	dskern:commandKeywordValue "tenant-uri" ;
+	rdfs:comment "Uri of the tenant to set context"@en ;
+    .
+dskern:CommandKeyword.VERBOSE a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+	dskern:argType [ owl:oneOf ( "on" "off" "quiet" ) ] ;
+	rdfs:label "VERBOSE" ; 
+	dskern:commandKeywordValue "on/off/quiet" ;
+	rdfs:comment "Control verbosity of console traces"@en ;
+    .
+dskern:CommandKeyword.RESULTFIRST a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+	dskern:argType [ owl:oneOf ( "on" "off" ) ] ;
+	rdfs:label "RESULTFIRST" ; 
+	dskern:commandKeywordValue "on/off" ;
+	rdfs:comment "Turn on/off resultFirst for query optimization "@en ;
+    .
+dskern:CommandKeyword.PROFILER a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+	dskern:argType [ owl:oneOf ( "on" "off" ) ] ;
+	rdfs:label "PROFILER" ; 
+	dskern:commandKeywordValue "on/off" ;
+	rdfs:comment "Turn on/off profiling information "@en ;
+    .
+dskern:CommandKeyword.PROFILER_PATH a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+	dskern:argType xsd:string ;
+	rdfs:label "PROFILER_PATH" ;
+	dskern:commandKeywordValue "profiling-dir" ;
+	rdfs:comment "Directory to set as output for profiling"@en ;
+    .
+dskern:CommandKeyword.PROFILER_ADD a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+	dskern:argType xsd:string ;
+	rdfs:label "PROFILER_ADD" ;
+	dskern:commandKeywordValue "categories-to-include" ;
+	rdfs:comment "Categories to include in profiling"@en ;
+    .
+dskern:CommandKeyword.PROFILER_REMOVE a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+	dskern:argType xsd:string ;
+	rdfs:label "PROFILER_REMOVE" ;
+	dskern:commandKeywordValue "categories-to-exclude" ;
+	rdfs:comment "Categories to exclude from profiling"@en ;
+    .
+dskern:CommandKeyword.DEBUG a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+	dskern:argType [ owl:oneOf ( "on" "off" ) ] ;
+	rdfs:label "DEBUG" ; 
+	dskern:commandKeywordValue "on/off" ;
+	rdfs:comment "Turn on/off debug trace information - for instances call stack trace"@en ;
+    .    
+dskern:CommandKeyword.VALIDATION a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+	dskern:argType [ owl:oneOf ( "on" "off" ) ] ;
+	rdfs:label "VALIDATION" ; 
+	dskern:commandKeywordValue "on/off" ;
+	rdfs:comment "Turn on/off validation "@en ;
+    . 
+dskern:CommandKeyword.LANGUAGE a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+	dskern:argType [ owl:oneOf ( "all" "en" "fr" "de" "ja" "zh" ) ] ;
+	rdfs:label "LANGUAGE" ;
+	dskern:commandKeywordValue "all/en/fr/de/ja/zh" ;
+	rdfs:comment "Set language"@en ;
+    .
+dskern:CommandKeyword.DRIVER a dskern:CommandKeyword ;
+	rdfs:label "DRIVER" ;
+    . 
+dskern:CommandKeyword.ENTAILMENT a rdfs:Class , dskern:OptionalCommandKeywordWithValue ;
+	dskern:argType [ owl:oneOf ( "on" "disable" ) ] ;
+	rdfs:label "ENTAILMENT" ; 
+	dskern:commandKeywordValue "on/disable" ;
+	rdfs:comment "Turn on/disable entailment "@en ;
+    .
+#Signature for set context command
+dskern:SetContextSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.CONTEXT
+		dskern:CommandKeyword.CWD
+		dskern:CommandKeyword.USER
+		dskern:CommandKeyword.PASSWORD
+		dskern:CommandKeyword.ROLE
+		dskern:CommandKeyword.TENANT
+		dskern:CommandKeyword.GRAPH
+		dskern:CommandKeyword.VERBOSE
+		dskern:CommandKeyword.RESULTFIRST
+		dskern:CommandKeyword.PROFILER
+		dskern:CommandKeyword.PROFILER_PATH
+		dskern:CommandKeyword.PROFILER_ADD
+		dskern:CommandKeyword.PROFILER_REMOVE
+		dskern:CommandKeyword.DEBUG
+		dskern:CommandKeyword.VALIDATION
+		dskern:CommandKeyword.LANGUAGE
+        dskern:CommandKeyword.ENTAILMENT
+	) ;
+    .
+dskern:CommandKeyword.PREFIX a rdfs:Class , dskern:CommandKeywordWithValue ;
+	dskern:argType xsd:string ;
+	rdfs:label "PREFIX" ; 
+	dskern:commandKeywordValue "prefix-string" ;
+	rdfs:comment "Prefix string for the namespace"@en ;
+    . 
+dskern:CommandKeyword.VALUE a rdfs:Class , dskern:CommandKeywordWithValue ;
+    dskern:argType xsd:string ;
+	rdfs:label "VALUE" ; 
+	dskern:commandKeywordValue "namespace-uri" ;
+	rdfs:comment "Fully expanded URI"@en ;
+    .
+dskern:SetPrefixSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.PREFIX
+		dskern:CommandKeyword.VALUE
+	) ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+    .
+dskern:Set dskern:signature dskern:SetContextSignature ;
+	dskern:signature dskern:SetPrefixSignature ;
+    .
+dskern:UnsetPrefixSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.PREFIX
+	) ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+    .
+dskern:Unset dskern:signature dskern:UnsetPrefixSignature ;
+    .
+#Signature for pop context command	
+dskern:PopCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.CONTEXT
+	) ;
+    .
+dskern:Pop dskern:signature dskern:PopCommandSignature ;
+    .
+#Signature for push context command	
+dskern:Push dskern:signature dskern:SetContextSignature ;
+    .
+#Signature for Dataset Add command
+dskern:AddCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "type-uri"; rdfs:comment "URI of the type to create an instance"@en ] 
+	) ;
+	dskern:signatureInputValueForm dskern:SignatureInputValueTurtle ;
+	dskern:signatureClause dskern:SparqlExpression ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+	dskern:signatureOption dskern:SignatureOption.URI ;
+	dskern:signatureOption dskern:SignatureOption.PREFIX ;
+	dskern:signatureOption dskern:SignatureOption.BLANK ;
+	dskern:signatureOption dskern:SignatureOption.FORMAT ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureOption dskern:SignatureOption.MULTITYPE ;
+	dskern:signatureOption dskern:SignatureOption.NOCHECK ;
+	dskern:signatureReturnType [
+      dskern:argType "instance-uri" ;
+      rdfs:comment "URI of the newly added instance"@en
+    ] ;
+    .
+dskern:Add dskern:signature dskern:AddCommandSignature ;
+    .
+
+dskern:AddNewCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "type-uri"; rdfs:comment "URI of the type to create an instance"@en ] 
+	) ;
+	dskern:signatureInputValueForm dskern:SignatureInputValueTurtle ;
+	dskern:signatureClause dskern:SparqlExpression ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+	dskern:signatureOption dskern:SignatureOption.URI ;
+	dskern:signatureOption dskern:SignatureOption.PREFIX ;
+	dskern:signatureOption dskern:SignatureOption.BLANK ;
+	dskern:signatureOption dskern:SignatureOption.FORMAT ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureReturnType [
+      dskern:argType "instance-uri" ;
+      rdfs:comment "URI of the newly added instance"@en
+    ] ;
+    .	
+dskern:GraphAdd dskern:signature dskern:AddNewCommandSignature ;
+    .
+dskern:TenantAdd dskern:signature dskern:AddNewCommandSignature ;
+    .
+	
+#signatures for Dataset Clone command
+dskern:CloneCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "uri"; rdfs:comment "URI of the type to clone a new instance"@en ] 
+	) ;
+	dskern:signatureInputValueForm dskern:SignatureInputValueTurtle ;
+	dskern:signatureClause dskern:SparqlExpression ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+	dskern:signatureOption dskern:SignatureOption.URI ;
+	dskern:signatureOption dskern:SignatureOption.PREFIX ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureOption dskern:SignatureOption.NOCHECK ;
+	dskern:signatureReturnType [
+      dskern:argType "instance-uri" ; 
+      rdfs:comment "URI of the newly cloned instance"@en
+    ] ;
+    .
+dskern:Clone dskern:signature dskern:CloneCommandSignature;
+    .
+#signatures for Dataset Delete command
+dskern:DeleteCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "uri"; rdfs:comment "URI of the type to delete an existing instance"@en ] 
+	) ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureReturnType [
+      dskern:argType "instance-uri" ; 
+      rdfs:comment "uri of the deleted instance"@en
+    ] ;
+    .
+dskern:Delete dskern:signature dskern:DeleteCommandSignature ;
+    .
+dskern:GraphDelete dskern:signature dskern:DeleteCommandSignature ;
+    .
+dskern:TenantDelete dskern:signature dskern:DeleteCommandSignature ;
+    .
+#signature for Get simply mirrors Print for now
+#signatures for Dataset Print command
+dskern:GetCommandSignature a dskern:Signature ;
+	dskern:signatureClause dskern:SparqlExpression ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "uri"; rdfs:comment "type or instance uri to print"@en ] 
+	) ;
+	dskern:signatureOption dskern:SignatureOption.SELECT ;
+	dskern:signatureOption dskern:SignatureOption.BOUNDED ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureOption dskern:SignatureOption.RETURNVALUE ;
+	dskern:signatureReturnType [
+      dskern:argType "output" ; 
+      rdfs:comment "details of the resource"@en
+    ] ;
+    .
+dskern:Get dskern:signature dskern:GetCommandSignature ;
+    .
+#signatures for Dataset Lock command
+dskern:LockCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "uri"; rdfs:comment "URI of the subject to lock"@en ] 
+	) ;
+	dskern:signatureOption dskern:SignatureOption.SELECT ;
+	dskern:signatureOption dskern:SignatureOption.PROPERTY ;
+	dskern:signatureReturnType [
+          dskern:argType "count-of-triples" ; 
+          rdfs:comment "Number of triples in result set"@en
+    ] ;
+    .
+dskern:Lock dskern:signature dskern:LockCommandSignature ;
+    .
+#signatures for Dataset Modify command
+dskern:ModifyCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "uri"; rdfs:comment "URI of the type to modify to an existing instance"@en ] 
+	) ;
+	dskern:signatureInputValueForm dskern:SignatureInputValueTurtle ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureReturnType [
+      dskern:argType "instance-uri" ; 
+      rdfs:comment "uri of the modified instance"@en
+    ] ;
+    .
+dskern:Modify dskern:signature dskern:ModifyCommandSignature ;
+    .
+dskern:GraphModify dskern:signature dskern:ModifyCommandSignature ;
+    .
+dskern:TenantModify dskern:signature dskern:ModifyCommandSignature ;
+    .
+#signatures for Dataset Print command
+dskern:PrintCommandSignature a dskern:Signature ;
+	dskern:signatureClause dskern:SparqlExpression ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "uri"; rdfs:comment "type or instance uri to print"@en ] 
+	) ;
+	dskern:signatureOption dskern:SignatureOption.SELECT ;
+	dskern:signatureOption dskern:SignatureOption.PROPERTY ;
+	dskern:signatureOption dskern:SignatureOption.BOUNDED ;
+	dskern:signatureOption dskern:SignatureOption.INVERSE ;
+	dskern:signatureOption dskern:SignatureOption.SYMMETRIC ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureOption dskern:SignatureOption.RETURNVALUE ;	
+	dskern:signatureOption dskern:SignatureOption.FILE ;
+	dskern:signatureOption dskern:SignatureOption.TFORMAT ;
+	dskern:signatureReturnType [
+      dskern:argType "output" ; 
+      rdfs:comment "details of the resource printed"@en
+    ] ;
+    .
+dskern:Print dskern:signature dskern:PrintCommandSignature ;
+    .
+#signatures for Dataset Remove command
+dskern:RemoveCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "uri"; rdfs:comment "type or instance uri to print"@en ] 
+	) ;
+	dskern:signatureInputValueForm dskern:SignatureInputValueTurtle ;
+	dskern:signatureClause dskern:SparqlExpression ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureReturnType [
+      dskern:argType "output" ; 
+      rdfs:comment "List of removed instances"@en
+    ] ;
+    .
+dskern:Remove dskern:signature dskern:RemoveCommandSignature ;
+    .
+#signature for Dataset ExpandTriple command
+dskern:ExpandTripleSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "instance-uri"; rdfs:comment "instance uri to expand"@en ] 
+	) ;
+	dskern:signatureOption dskern:SignatureOption.TYPE ;
+	dskern:signatureOption dskern:SignatureOption.SELECT ;
+	dskern:signatureOption dskern:SignatureOption.DIRECTION ;
+	dskern:signatureOption dskern:SignatureOption.RECURSE ;
+	dskern:signatureOption dskern:SignatureOption.FILTER ;
+	dskern:signatureOption dskern:SignatureOption.PREVENTDUPLICATES ;
+	dskern:signatureOption dskern:SignatureOption.TARGETTYPE ; 
+	dskern:signatureOption dskern:SignatureOption.TARGETSELECT ;
+	dskern:signatureOption dskern:SignatureOption.BOUNDED ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureOption dskern:SignatureOption.RETURNVALUE ;
+	dskern:signatureReturnType [
+      dskern:argType "ExpandIterator" ; 
+      rdfs:comment "Iterator to work with exand triple results - List of (  level  relationship  entity  )"@en
+    ] ;
+    .
+dskern:ExpandTriple dskern:signature dskern:ExpandTripleSignature ;
+    .
+#signature for Dataset ExpandTripleFunction
+dskern:ExpandTripleFunctionSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType dskern:Entity; rdfs:label "instance-uri"; rdfs:comment "entity-uri to expand"@en ] 
+		[dskern:argType xsd:string; rdfs:label "optionX=Y"; rdfs:comment "expression"@en ] 
+	) ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureOption dskern:SignatureOption.RETURNVALUE ;
+	dskern:signatureReturnType [
+      dskern:argType "ExpandIterator" ; 
+      rdfs:comment "Iterator to work with exand triple results - List of (  level  relationship  entity  )"@en
+    ] ;
+    .
+dskern:expandTriple dskern:signature dskern:ExpandTripleFunctionSignature ;
+    .
+#signatures for Dataset Move command
+dskern:MoveCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "uri"; rdfs:comment "URI of the instance to move to another graph"@en ] 
+	) ;
+	dskern:signatureInputValueForm dskern:SignatureInputValueTurtle ;
+	dskern:signatureOption dskern:SignatureOption.TOGRAPH ;
+    .
+dskern:Move dskern:signature dskern:MoveCommandSignature ;
+    .
+#signature for Container Insert command
+dskern:InsertIntoContainerSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Container; rdfs:label "container-uri"; rdfs:comment "bound variable that is evaluated to uri of rdfs:Container by where clause"@en] 
+		[a dskern:OptionalCommandKeywordWithValue; rdfs:label "FIRST | LAST | ANY | index   ObjectList"; rdfs:comment "Keyword to indicate either the first, last, any matching or given index element in rdfs:Container being manipulated"@en ]
+	) ;
+	dskern:signatureInputValueForm dskern:SignatureInputValueTurtle ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureClause dskern:SparqlExpression ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+    .
+dskern:InsertIntoContainer dskern:signature dskern:InsertIntoContainerSignature ;
+    .
+#signature for Container Modify command
+dskern:ModifyContainerSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Container; rdfs:label "container-uri"; rdfs:comment "uri or bound variable that is evaluated to a uri of rdfs:Container by where clause"@en ] 
+		[a dskern:OptionalCommandKeywordWithValue; rdfs:label "FIRST | LAST | ANY | index   ObjectList"; rdfs:comment "Keyword to indicate either the first, last, any matching or given index element in rdfs:Container being manipulated"@en ]
+	) ;
+	dskern:signatureInputValueForm dskern:SignatureInputValueTurtle ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureClause dskern:SparqlExpression ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+	dskern:signatureReturnType [
+      dskern:argType "modified-uri" ; 
+      rdfs:comment "uri of rdf:Container modified"@en
+    ] ;
+    .
+dskern:ModifyContainer dskern:signature dskern:ModifyContainerSignature ;
+    .
+#signature for Container Remove command
+dskern:RemoveFromContainerSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Container; rdfs:label "container-uri"; rdfs:comment "uri or bound variable that is evaluated to a uri of rdfs:Container by where clause"@en ] 
+		[a dskern:OptionalCommandKeywordWithValue; rdfs:label "FIRST | LAST | ANY | index   ObjectList | ANY"; rdfs:comment "Keyword to indicate either the first, last, any matching or given index element in rdfs:Container being manipulated"@en ]
+	) ;
+	dskern:signatureInputValueForm dskern:SignatureInputValueTurtle ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureClause dskern:SparqlExpression ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+	dskern:signatureReturnType [
+      dskern:argType "removed-uri" ; 
+      rdfs:comment "uri of rdf:Container removed"@en
+    ] ;
+    .
+dskern:RemoveFromContainer dskern:signature dskern:RemoveFromContainerSignature ;
+    .
+#signature for List Insert command
+dskern:InsertIntoListSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdf:List; rdfs:label "list-uri"; rdfs:comment "uri or bound variable that is evaluated to a uri of rdf:List by where clause"@en ] 
+		[a dskern:OptionalCommandKeywordWithValue; rdfs:label "FIRST | LAST | ANY | index   ObjectList"; rdfs:comment "Keyword to indicate either the first, last, any matching or given index element in rdfs:List being manipulated"@en ]
+	) ;
+	dskern:signatureInputValueForm dskern:SignatureInputValueTurtle ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureClause dskern:SparqlExpression ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+    .
+dskern:InsertIntoList dskern:signature dskern:InsertIntoListSignature ;
+    .
+#signature for List Modify command
+dskern:ModifyListSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdf:List; rdfs:label "list-uri"; rdfs:comment "uri or bound variable that is evaluated to a uri of rdf:List by where clause"@en ] 
+		[a dskern:OptionalCommandKeywordWithValue; rdfs:label "FIRST | LAST | ANY | index   ObjectList"; rdfs:comment "Keyword to indicate either the first, last, any matching or given index element in rdfs:List being manipulated"@en ]
+	) ;
+	dskern:signatureInputValueForm dskern:SignatureInputValueTurtle ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureClause dskern:SparqlExpression ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+	dskern:signatureReturnType [
+        dskern:argType "modified-uri" ; 
+        rdfs:comment "uri of rdf:List modified"@en
+    ] ;
+    .
+dskern:ModifyList dskern:signature dskern:ModifyListSignature ;
+    .
+#signature for List Remove command
+dskern:RemoveFromListSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdf:List; rdfs:label "list-uri"; rdfs:comment "uri or bound variable that is evaluated to a uri of rdf:List by where clause"@en ] 
+		[a dskern:OptionalCommandKeywordWithValue; rdfs:label "FIRST | LAST | ANY | index   ObjectList | ANY"; rdfs:comment "Keyword to indicate either the first, last, any matching or given index element in rdfs:List being manipulated"@en ]
+	) ;
+	dskern:signatureInputValueForm dskern:SignatureInputValueTurtle ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureClause dskern:SparqlExpression ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+	dskern:signatureReturnType [
+      dskern:argType "removed-uri" ;
+      rdfs:comment "uri of rdf:List removed"@en
+    ] ;
+    .
+dskern:RemoveFromList dskern:signature dskern:RemoveFromListSignature ;
+    .
+#signatures for Console Transaction specific commands 
+dskern:CommandKeyword.TRANSACTION a dskern:CommandKeyword ;
+	rdfs:label "TRANSACTION" ;
+	rdfs:comment "transaction boundary"@en ;
+    .
+dskern:StartTransactionCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( dskern:CommandKeyword.TRANSACTION ) ;
+	dskern:signatureReturnType rdf:nil ;
+    .
+dskern:CommitTransactionCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( dskern:CommandKeyword.TRANSACTION ) ;
+	dskern:signatureReturnType [
+      dskern:argType "commit-status" ;
+      rdfs:comment "true if ok, false if the active transaction has been aborted"@en
+    ] ;
+    .
+dskern:AbortTransactionCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( dskern:CommandKeyword.TRANSACTION ) ;
+	dskern:signatureReturnType rdf:nil ;
+    .
+dskern:Start dskern:signature dskern:StartTransactionCommandSignature ;
+    .
+dskern:Commit dskern:signature dskern:CommitTransactionCommandSignature ;
+    .
+dskern:Abort dskern:signature dskern:AbortTransactionCommandSignature ;
+    .
+#signature for Baseline command
+dskern:BaselineSignature a dskern:Signature ;
+	dskern:signatureReturnType rdf:nil ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+    .	
+dskern:Baseline dskern:signature dskern:BaselineSignature ;
+    .
+#signature for Console Count command
+dskern:CountSignature a dskern:Signature ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureReturnType [
+      dskern:argType "count-of-triples" ; 
+      rdfs:comment "Number of triples in default or named graph"@en
+    ] ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+    .
+dskern:Count dskern:signature dskern:CountSignature ;
+    .
+#signatures for Console DeleteTriple command
+dskern:DeleteTripleSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "uri"; rdfs:comment "URI of the resource to delete triples from"@en ] 
+	) ;
+	dskern:signatureInputValueForm dskern:SignatureInputValueTurtle ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+    .
+dskern:DeleteTriple dskern:signature dskern:DeleteTripleSignature ;
+    .
+#signatures for Console InsertTriple command
+dskern:InsertTripleSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "uri"; rdfs:comment "URI of the resource to insert triples to"@en ] 
+	) ;
+	dskern:signatureInputValueForm dskern:SignatureInputValueTurtle ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+	dskern:signatureReturnType [
+      dskern:argType "uri" ; 
+      rdfs:comment "uri of the resource that triples were added to"@en
+    ] ;
+    .
+dskern:InsertTriple dskern:signature dskern:InsertTripleSignature ;
+    .
+#signatures for Console List command
+dskern:CommandKeyword.PREFIXES a dskern:CommandKeyword ;
+	rdfs:label "PREFIXES" ;
+	rdfs:comment "All the prefixes in the system"@en ;
+    .
+dskern:SignatureOption.SYSTEM a dskern:SignatureOption ;
+	rdfs:label "SYSTEM" ;
+	rdfs:comment "Just 'system' prefixes"@en ;
+    .
+dskern:SignatureOption.ADMIN a dskern:SignatureOption ;
+	rdfs:label "ADMIN" ;
+	rdfs:comment "Just 'tenant' prefixes"@en ;
+    .
+dskern:SignatureOption.TRANSIENT a dskern:SignatureOption ;
+	rdfs:label "TRANSIENT" ;
+	rdfs:comment "Just 'transient' prefixes"@en ;
+    .
+dskern:ListPrefixSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.PREFIXES
+	) ;
+	dskern:signatureOption dskern:SignatureOption.SYSTEM ;
+	dskern:signatureOption dskern:SignatureOption.ADMIN ;
+	dskern:signatureOption dskern:SignatureOption.TRANSIENT ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureReturnType [
+      dskern:argType "prefixes" ;
+      rdfs:comment "List of all available prefixes"@en
+    ] ;
+    .
+dskern:CommandKeyword.GRAPHS a dskern:CommandKeyword ;
+	rdfs:label "GRAPHS" ;
+	rdfs:comment "All the graphs in the system"@en ;
+    .
+dskern:ListGraphsSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.GRAPHS
+	) ;
+	dskern:signatureOption dskern:SignatureOption.URI ;
+	dskern:signatureOption dskern:SignatureOption.PROPERTY ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureReturnType [
+      dskern:argType "graphs" ; 
+      rdfs:comment "List of all available graphs, or graphs containing the given URI as a subject"@en
+    ] ;
+    .
+dskern:CommandKeyword.pGRAPHS a dskern:CommandKeyword ;
+	rdfs:label "PGRAPHS" ;
+	rdfs:comment "All the pGraphs in the system, classified under their principal graphs, each next level of indentation means \'has dskern:subSubjectGraphOf\'"@en ;
+    .
+dskern:ListpGraphsSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.pGRAPHS
+	) ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE;
+	dskern:signatureReturnType [
+      dskern:argType "graphs" ; 
+      rdfs:comment "List of all pGraphs"@en
+    ] ;
+    .	
+
+dskern:CommandKeyword.VOCABULARIES a dskern:CommandKeyword ;
+	rdfs:label "VOCABULARIES" ;
+	rdfs:comment "All the vocabularies in the system"@en ;
+    .
+dskern:ListVocabulariesSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.VOCABULARIES
+	) ;
+	dskern:signatureOption dskern:SignatureOption.URI ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureReturnType [
+      dskern:argType "vocabularies" ; 
+      rdfs:comment "List of all available vocabularies, or the vocabulary containing the given URI as a subject"@en
+    ] ;
+    .
+dskern:ListSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "type-uri"; rdfs:comment "URI of the element"@en ]
+	) ;
+	dskern:signatureOption dskern:SignatureOption.PROPERTY ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureReturnType [
+      dskern:argType "instances" ; 
+      rdfs:comment "List of all instances of type-uri"@en
+    ] ;
+    .
+
+dskern:CommandKeyword.DATATYPES a dskern:CommandKeyword ;
+	rdfs:label "DATATYPES" ;
+	rdfs:comment "All available datatypes"@en ;
+    .
+dskern:ListDatatypesSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.DATATYPES
+	) ;
+	dskern:signatureOption dskern:SignatureOption.RETURNTYPE ;
+	dskern:signatureReturnType [
+      dskern:argType "datatypes" ; 
+      rdfs:comment "List of all available datatypes"@en
+    ] ;
+    .
+
+dskern:List dskern:signature dskern:ListSignature ;
+	dskern:signature dskern:ListPrefixSignature ;
+	dskern:signature dskern:ListGraphsSignature ;
+    dskern:signature dskern:ListpGraphsSignature ;
+    dskern:signature dskern:ListVocabulariesSignature ;
+    dskern:signature dskern:ListDatatypesSignature ;
+    .
+#signature for Console Run command
+dskern:RunOption.STEP a dskern:SignatureOption ;
+	rdfs:label "STEP" ;
+	rdfs:comment "Option to execute run command in step mode"@en ;
+    .
+dskern:RunOption.QUIET a dskern:SignatureOption ;
+	rdfs:label "QUIET" ;
+	rdfs:comment "Option to prevent echo of successful replies"@en ;
+    .
+
+dskern:RunSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Literal; rdfs:label "file-to-run"; rdfs:comment "Full path to the rql file to execute"]
+	) ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+	dskern:signatureOption dskern:RunOption.STEP ;
+	dskern:signatureOption dskern:RunOption.QUIET ;
+    .
+dskern:Run dskern:signature dskern:RunSignature ;
+    .
+#signature for Console Echo command
+dskern:EchoSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Literal; rdfs:label "string-to-echo"; rdfs:comment "string to echo"]
+	) ;
+    .
+dskern:Echo dskern:signature dskern:EchoSignature ;
+    .    
+#signature for Console Validate command
+dskern:SignatureOption.SHACL a dskern:SignatureOption ;
+	rdfs:label "SHACL" ;
+	rdfs:comment "Option to use SHACL for the validation operation"@en ;
+    .
+dskern:ValidateSignature a dskern:Signature ;
+	dskern:signatureOption dskern:SignatureOption.TYPE ;
+	dskern:signatureOption dskern:SignatureOption.SHACL ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+    .
+dskern:Validate dskern:signature dskern:ValidateSignature ;
+    .
+#signatures for Console Show command
+dskern:CommandKeyword.SESSION a dskern:CommandKeyword ;
+	rdfs:label "SESSION" ;
+	rdfs:comment "Show the session information"@en ;
+    .
+dskern:ShowSessionSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.SESSION 
+	) ;
+	dskern:signatureOption dskern:SignatureOption.SELECT ;
+	dskern:signatureReturnType [
+      dskern:argType "session-info" ; 
+      rdfs:comment "Information about the current/active session"@en
+    ] ;
+    .
+dskern:ShowContextSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.CONTEXT 
+	) ;
+	dskern:signatureOption dskern:SignatureOption.SELECT ;
+	dskern:signatureReturnType [
+      dskern:argType "context-info" ;
+      rdfs:comment "Information about the current/active context"@en 
+    ] ;
+    .
+dskern:ShowDriverSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.DRIVER 
+	) ;
+	dskern:signatureOption dskern:SignatureOption.SELECT ;
+	dskern:signatureReturnType [
+      dskern:argType "dataset-info" ; 
+      rdfs:comment "Information about the connected dataset "@en
+    ] ;
+    .	
+dskern:Show dskern:signature dskern:ShowSessionSignature ;
+	dskern:signature dskern:ShowContextSignature ;
+	dskern:signature dskern:ShowDriverSignature ;
+    .
+#signature for Invoke command
+dskern:InvokeSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "method-uri"; rdfs:comment "URI to a dskern:Function instance"@en ] 
+	) ;	
+	dskern:signatureInputValueForm dskern:SignatureInputValueList ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+	dskern:signatureOption dskern:SignatureOption.THIS ;
+	dskern:signatureReturnType [
+        dskern:argType "output" ;
+        rdfs:comment "Output of function executed "@en
+    ] ;
+    .
+dskern:Invoke dskern:signature dskern:InvokeSignature ;
+    .
+#Signature for Console Help command
+dskern:HelpCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[a dskern:OptionalCommandKeyword; rdfs:label "function-name"; rdfs:comment "Name of the command or function for which help is required"@en ] 
+		[a dskern:OptionalCommandKeyword; rdfs:label "type-uri"; rdfs:comment "URI of the type for which help is required"@en ] 
+	) ;
+	dskern:signatureReturnType [
+        dskern:argType "help-desc" ; 
+        rdfs:comment "Help documentation for the command and or type-uri"@en
+    ] ;
+    .
+dskern:Help dskern:signature dskern:HelpCommandSignature ;
+    .
+#Signature for Console Import command
+dskern:SignatureOption.FILETYPE a rdfs:Class , dskern:SignatureOptionWithValue ;
+    dskern:argType xsd:string ;
+	rdfs:label "FILETYPE" ;
+	dskern:commandKeywordValue "file-type" ;
+	rdfs:comment "Type of the file - by default it is turtle. It can be one of the following RDF formats: turtle, x-turtle, n3, n-quads, n-triples, rdf+xml, rdf+json, trix+xml, trig"@en ;
+    . 
+dskern:SignatureOption.BULKLOAD a dskern:SignatureOption ;
+	rdfs:label "BULKLOAD" ;
+	rdfs:comment "Option to import in bulk mode"@en ;
+    .
+dskern:SignatureOption.ANALYZEINDEX a dskern:SignatureOption ;
+	rdfs:label "ANALYZEINDEX" ;
+	rdfs:comment "Option to enable analyze of indexes in bulk mode. By default it is turned off"@en ;
+    .
+dskern:SignatureOption.PREFIXES a dskern:SignatureOption ;
+	rdfs:label "PREFIXES" ;
+	rdfs:comment "Option to import prefixes"@en ;
+    .
+dskern:ImportCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Literal; rdfs:label "file-path"; rdfs:comment "Full path to the file to import"@en ] 
+	) ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+	dskern:signatureOption dskern:SignatureOption.FILETYPE ;
+	dskern:signatureOption dskern:SignatureOption.BULKLOAD ;
+	dskern:signatureOption dskern:SignatureOption.ANALYZEINDEX ;
+	dskern:signatureOption dskern:SignatureOption.PREFIXES ;
+    .
+dskern:Import dskern:signature dskern:ImportCommandSignature ;
+    .
+dskern:SignatureOption.GRAPHS a rdfs:Class , dskern:SignatureOptionWithValue ;
+    dskern:argType dskern:Graph ;
+	rdfs:label "GRAPHS" ;
+	dskern:commandKeywordValue "graph-uris" ;
+	rdfs:comment "Selective graphs to export (space delimited for list). By default exports all accessible graphs"@en ;
+    . 
+dskern:SignatureOption.BULKDUMP a dskern:SignatureOption ;
+	rdfs:label "BULKDUMP" ;
+	rdfs:comment "Option to export in bulk mode"@en ;
+    .
+dskern:SignatureOption.ALL a dskern:SignatureOption ;
+	rdfs:label "ALL" ;
+	rdfs:comment "Option to export all graphs"@en ;
+    .
+dskern:ExportCommandSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Literal; rdfs:label "file-path"; rdfs:comment "Full path to the exported file (or directory if ALL option used)"@en ]
+	) ;
+	dskern:signatureOption dskern:SignatureOption.GRAPHS ;
+    dskern:signatureOption dskern:SignatureOption.FILETYPE ;
+    dskern:signatureOption dskern:SignatureOption.BULKDUMP ;
+    dskern:signatureOption dskern:SignatureOption.ALL ;
+    .
+dskern:Export dskern:signature dskern:ExportCommandSignature ;
+    .
+#signature for Console Deploy command
+dskern:CommandKeyword.ALL a dskern:CommandKeyword ;
+	rdfs:label "ALL" ;
+	rdfs:comment "Indicate if all the scripts in rjs folder be deployed"@en ;
+    .
+dskern:SignatureOption.VOLATILE a dskern:SignatureOption ;
+	rdfs:label "VOLATILE" ;
+	rdfs:comment "Indicate if the module being deployed is volatile."@en ;
+    .
+dskern:SignatureOption.DEBUG a dskern:SignatureOption ;
+	rdfs:label "DEBUG" ;
+	rdfs:comment "Option to indicate if deploying in debug mode -- i.e., no changes to model."@en ;
+    .
+dskern:SignatureOption.OVERWRITE a dskern:SignatureOption ;
+	rdfs:label "OVERWRITE" ;
+	rdfs:comment "Option to indicate whether a local file should be overwritten if a file of the same name is already present."@en ;
+    .
+dskern:SignatureOption.JS a dskern:SignatureOption ;
+	rdfs:label "JS" ;
+	rdfs:comment "Option to indicate whether to get JS source as well as the RJS source in GETRJS."@en ;
+    .
+dskern:SignatureOption.DIR a rdfs:Class , dskern:SignatureOptionWithValue ;
+    dskern:argType xsd:string ;
+	dskern:commandKeywordValue "base-dir" ;
+	rdfs:label "DIR" ;
+	rdfs:comment "Option to specify the base destination directory to write RJS/JS source to. Source will be written into generated subdirectories of this base directory named 'rjs' and 'js'."@en ;
+    .
+dskern:SignatureOption.RQL a rdfs:Class , dskern:SignatureOptionWithValue ;
+    dskern:argType xsd:string ;
+	dskern:commandKeywordValue "rql-file" ;
+	rdfs:label "RQL" ;
+	rdfs:comment "Option to provide a local filesystem path to write the RQL of a DEPLOY to."@en ;
+    .
+dskern:CommandKeywordWithValue.FILE a rdfs:Class , dskern:CommandKeywordWithValue ;
+	rdfs:label "FILE" ;
+    .
+dskern:CommandKeyword.MODULE a rdfs:Class , dskern:CommandKeywordWithValue ;
+	dskern:argType xsd:string ;
+	rdfs:label "MODULE" ; 
+	dskern:commandKeywordValue "module-mask" ;
+	rdfs:comment "Mask indicating modules"@en ;
+    . 
+dskern:DeployModuleSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.MODULE
+		dskern:CommandKeyword.APP
+	) ;
+	dskern:signatureOption dskern:SignatureOption.DEBUG ;
+	dskern:signatureOption dskern:SignatureOption.VOLATILE ;
+	dskern:signatureOption dskern:SignatureOption.OVERWRITE ;
+	dskern:signatureOption dskern:SignatureOption.RQL ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+    .
+dskern:DeployModuleOldSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Literal; rdfs:label "module-mask"; rdfs:comment "Mask indicating modules to deploy"]
+	) ;
+	dskern:signatureOption dskern:SignatureOption.DEBUG ;
+	dskern:signatureOption dskern:SignatureOption.VOLATILE ;
+	dskern:signatureOption dskern:SignatureOption.OVERWRITE ;
+	dskern:signatureOption dskern:SignatureOption.RQL ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+    .
+dskern:CommandKeyword.DEPLOYVOCABULARY a rdfs:Class , dskern:CommandKeywordWithValue ;
+	dskern:argType xsd:string ;
+	rdfs:label "VOCABULARY" ; 
+	dskern:commandKeywordValue "file-list" ;
+	rdfs:comment "Comma separated list of file names"@en ;
+    . 
+dskern:CommandKeyword.UNDEPLOYVOCABULARY a rdfs:Class , dskern:CommandKeywordWithValue ;
+	dskern:argType xsd:string ;
+	rdfs:label "VOCABULARY" ; 
+	dskern:commandKeywordValue "vocabulary-list" ;
+	rdfs:comment "Comma separated list of vocabulary URI/prefixes"@en ;
+    . 
+dskern:CommandKeyword.APP a rdfs:Class , dskern:CommandKeywordWithValue ;
+    dskern:argType xsd:string ;
+	dskern:commandKeywordValue "app-name" ;
+	rdfs:label "APP" ;
+	rdfs:comment "The application/component name"@en ;
+    .
+dskern:DeployVocabularySignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.DEPLOYVOCABULARY
+		dskern:CommandKeyword.APP
+	) ;
+	dskern:signatureOption dskern:SignatureOption.PREFIXES ;
+    .
+dskern:CommandKeyword.DEPLOYSHAPES a rdfs:Class , dskern:CommandKeywordWithValue ;
+	dskern:argType xsd:string ;
+	rdfs:label "SHAPES" ; 
+	dskern:commandKeywordValue "file-list" ;
+	rdfs:comment "Comma separated list of file names"@en ;
+    . 
+dskern:CommandKeyword.UNDEPLOYSHAPES a rdfs:Class , dskern:CommandKeywordWithValue ;
+	dskern:argType xsd:string ;
+	rdfs:label "SHAPES" ; 
+	dskern:commandKeywordValue "shapes-list" ;
+	rdfs:comment "Comma separated list of shapes URIs"@en ;
+    . 
+dskern:DeployShapesSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.DEPLOYSHAPES
+		dskern:CommandKeyword.APP
+	) ;
+	dskern:signatureOption dskern:SignatureOption.PREFIXES ;
+    .
+dskern:Deploy dskern:signature dskern:DeployModuleOldSignature , dskern:DeployModuleSignature , dskern:DeployVocabularySignature , dskern:DeployShapesSignature ;
+    .
+dskern:UndeployModuleSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.MODULE
+		dskern:CommandKeyword.APP
+	) ;
+	dskern:signatureOption dskern:SignatureOption.DEBUG ;
+	dskern:signatureOption dskern:SignatureOption.RQL ;
+    .
+dskern:UndeployModuleOldSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Literal; rdfs:label "module-mask"; rdfs:comment "Mask indicating modules to undeploy"]
+	) ;
+	dskern:signatureGraph dskern:WithGraphExpression  ;
+	dskern:signatureOption dskern:SignatureOption.DEBUG ;
+	dskern:signatureOption dskern:SignatureOption.RQL ;
+    .
+#dskern:SignatureOption.DATA a dskern:SignatureOption ;
+#	rdfs:label "DATA" ;
+#	rdfs:comment "Option to remove all individuals dependent on the vocabularies"@en ;
+#    .
+dskern:UndeployVocabularySignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.UNDEPLOYVOCABULARY
+		dskern:CommandKeyword.APP
+	) ;
+#	dskern:signatureOption dskern:SignatureOption.DATA ;
+    .
+dskern:UndeployShapesSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		dskern:CommandKeyword.UNDEPLOYSHAPES
+		dskern:CommandKeyword.APP
+	) ;
+    .
+dskern:Undeploy dskern:signature dskern:UndeployModuleOldSignature , dskern:UndeployModuleSignature , dskern:UndeployVocabularySignature , dskern:UndeployShapesSignature ;
+    .
+dskern:GetrjsSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Literal; rdfs:label "file-to-write-rjs-to"; rdfs:comment "Full path of the file to which to write the RJS code."]
+	) ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+	dskern:signatureOption dskern:SignatureOption.OVERWRITE ;
+	dskern:signatureOption dskern:SignatureOption.JS ;
+	dskern:signatureOption dskern:SignatureOption.DIR ;
+    .
+dskern:Getrjs dskern:signature dskern:GetrjsSignature ;
+    .
+#Signature for Dataset FlushCache command
+dskern:FlushCacheCommandSignature a dskern:Signature ;
+	dskern:signatureOption dskern:SignatureOption.TYPE ;
+    .
+dskern:FlushCache dskern:signature dskern:FlushCacheCommandSignature ;
+    .
+#Signature for Entail command
+dskern:EntailCommandSignature a dskern:Signature ;
+	dskern:signatureOption dskern:SignatureOption.TYPE ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+    .
+dskern:Entail dskern:signature dskern:EntailCommandSignature ;
+    .
+#Keywords for Dataset JSON Patch commands
+dskern:PatchCmdArgument.ADD a rdfs:Class , dskern:SignatureOptionWithValue ;
+	rdfs:label "ADD" ; 
+	dskern:commandKeywordValue "patch-path" ;
+	rdfs:comment "Path to add the VALUE object to"@en ;
+    .
+dskern:PatchCmdArgument.COPY a rdfs:Class , dskern:SignatureOptionWithValue ;
+	rdfs:label "COPY" ; 
+	dskern:commandKeywordValue "patch-path" ;
+	rdfs:comment "Path to copy the FROM object to"@en ;
+    .
+dskern:PatchCmdArgument.MOVE a rdfs:Class , dskern:SignatureOptionWithValue ;
+	rdfs:label "MOVE" ; 
+	dskern:commandKeywordValue "patch-path" ;
+	rdfs:comment "Path to move the FROM object to"@en ;
+    .
+dskern:PatchCmdArgument.REMOVE a rdfs:Class , dskern:SignatureOptionWithValue ;
+	rdfs:label "REMOVE" ; 
+	dskern:commandKeywordValue "patch-path" ;
+	rdfs:comment "Path to the object to be removed"@en ;
+    .
+dskern:PatchCmdArgument.REPLACE a rdfs:Class , dskern:SignatureOptionWithValue ;
+	rdfs:label "REPLACE" ; 
+	dskern:commandKeywordValue "patch-path" ;
+	rdfs:comment "Path to the object to replace with the VALUE object"@en ;
+    .
+dskern:PatchCmdArgument.TEST a rdfs:Class , dskern:SignatureOptionWithValue ;
+	rdfs:label "TEST" ; 
+	dskern:commandKeywordValue "patch-path" ;
+	rdfs:comment "Path to the object to test against the VALUE object"@en ;
+    .
+dskern:PatchCmdArgument.FROM a rdfs:Class , dskern:SignatureOptionWithValue ;
+	rdfs:label "FROM" ; 
+	dskern:commandKeywordValue "patch-path" ;
+	rdfs:comment "MOVE or COPY the object referred to by this path"@en ;
+    . 
+dskern:PatchCmdArgument.VALUE a rdfs:Class , dskern:SignatureOptionWithValue ;
+	rdfs:label "VALUE" ; 
+	dskern:commandKeywordValue "resource-uri or literal" ;
+	rdfs:comment "ADD, REPLACE and TEST the object referred to by this path"@en ;
+    .
+dskern:PatchSignature a dskern:Signature ;
+	dskern:signatureArgs ( 
+		[dskern:argType rdfs:Resource; rdfs:label "root-uri"; rdfs:comment "root URI for all paths"@en ] 
+	) ;
+	dskern:signatureGraph dskern:WithGraphExpression ;
+# commands
+	dskern:signatureOption dskern:PatchCmdArgument.ADD ;
+	dskern:signatureOption dskern:PatchCmdArgument.COPY ;
+	dskern:signatureOption dskern:PatchCmdArgument.MOVE ;
+	dskern:signatureOption dskern:PatchCmdArgument.REMOVE ;
+	dskern:signatureOption dskern:PatchCmdArgument.REPLACE ;
+	dskern:signatureOption dskern:PatchCmdArgument.TEST ;
+# arguments
+	dskern:signatureOption dskern:PatchCmdArgument.FROM ;
+	dskern:signatureOption dskern:PatchCmdArgument.VALUE ;
+	dskern:signatureReturnType [
+      dskern:argType "boolean" ; 
+      rdfs:comment "result for the TEST option"@en
+    ] ;
+    .
+dskern:Patch dskern:signature dskern:PatchSignature ;
+    .
+dskern:Placeholder a dskern:Signature ;
+    .
+dskern:Select dskern:signature dskern:Placeholder ;
+    .
+dskern:Sparql dskern:signature dskern:Placeholder ;
+    .
+

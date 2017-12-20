@@ -1,0 +1,140 @@
+# 12-may-2016 - jfa - corrected issues found by xturtle
+# 19-apr-2016 - kpu - remove references to dsM3/M2/M1/M0
+
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+
+@prefix dscust:    <http://www.3ds.com/RDF/Corpus/Custom/> .
+@prefix dspol:     <http://www.3ds.com/RDF/Corpus/Policy/> .
+@prefix dskern:    <http://www.3ds.com/RDF/Corpus/Kernel/> .
+
+@prefix foaf:     <http://xmlns.com/foaf/0.1/> .
+@prefix dcmit: <http://purl.org/dc/dcmitype/> .
+@prefix dcam: <http://purl.org/dc/dcam/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<http://www.3ds.com/RDF/Corpus/Kernel-Dep> a owl:Ontology ;
+    rdfs:label "Vocabulary for the 3DEXPERIENCE PLATFORM Kernel Deprecations"@en ;
+    rdfs:comment "Dassault Systemes kernel deprecations, described using W3C RDF Schema and the Web Ontology Language."@en ;
+    .
+
+# ----- resources deprecated from dskern vocabulary -----
+
+dspol:Entity a rdfs:Class ;
+	rdfs:subClassOf dskern:Prototype ;
+    rdfs:subClassOf dskern:Securable ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Corpus/Kernel-Dep> ;
+    rdfs:label "Entity Type"@en ;
+    rdfs:comment "The base class for all entity types"@en ;
+	owl:deprecated "true"^^xsd:boolean ;
+	.
+dspol:label a owl:FunctionalProperty ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Corpus/Kernel-Dep> ;
+    rdfs:subPropertyOf rdfs:label ;
+    rdfs:comment "A functional label" ;
+    dspol:label "Title" ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:string ;
+    dskern:key "title"^^xsd:string ;
+	owl:deprecated "true"^^xsd:boolean ;
+    .
+dspol:comment a owl:FunctionalProperty ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Corpus/Kernel-Dep> ;
+    rdfs:subPropertyOf rdfs:comment ;
+    rdfs:comment "A functional comment. Used in UI for properties" ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:string ;
+    dskern:key "subtitle"^^xsd:string ;
+	owl:deprecated "true"^^xsd:boolean ;
+    .
+dspol:firstName a owl:FunctionalProperty ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Corpus/Kernel-Dep> ;
+    rdfs:subPropertyOf foaf:firstName ;
+    rdfs:comment "A functional first name" ;
+    rdfs:domain foaf:Person ;
+    rdfs:range xsd:string ;
+    dskern:key "firstName"^^xsd:string ;
+    dspol:label "First Name" ;
+    dspol:comment "User's First Name" ;
+	owl:deprecated "true"^^xsd:boolean ;
+    .
+dspol:lastName a owl:FunctionalProperty ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Corpus/Kernel-Dep> ;
+    rdfs:subPropertyOf foaf:lastName ;
+    rdfs:comment "A functional last name" ;
+    rdfs:domain foaf:Person ;
+    rdfs:range xsd:string ;
+    dskern:key "lastName"^^xsd:string ;
+    dspol:label "Last Name" ;
+    dspol:comment "User's Last Name" ;
+	owl:deprecated "true"^^xsd:boolean ;
+    .
+dspol:email a owl:FunctionalProperty, dskern:CompositionProperty ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Corpus/Kernel-Dep> ;
+    rdfs:comment "Person's e-mail address" ;
+    rdfs:subPropertyOf foaf:mbox ;
+    rdfs:domain foaf:Agent ;
+    rdfs:range dspol:Email ;
+    dskern:compact "true"^^xsd:boolean ;
+    dskern:key "mbox"^^xsd:string ;
+    dspol:label "E-Mail" ;
+    dspol:comment "User's E-Mail Address" ;
+	owl:deprecated "true"^^xsd:boolean ;
+    .
+dspol:image a owl:FunctionalProperty ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Corpus/Kernel-Dep> ;
+    rdfs:comment "The image that depicts the subject" ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range dcmit:Image ;
+    dskern:key "image"^^xsd:string ;
+    dskern:compact "true"^^xsd:boolean ;
+    dskern:uiModule "DS/RDFDesktop/Views/Inputs/Text" ;
+    dspol:label "Image" ;
+    dspol:comment "Picture" ;
+	owl:deprecated "true"^^xsd:boolean ;
+    .
+dspol:Email a rdfs:Class ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Corpus/Kernel-Dep> ;
+    rdfs:subClassOf owl:Thing ;
+    rdfs:comment "The Class of e-mail addresses" ;
+    dskern:uiModule "DS/RDFDesktop/Views/Inputs/Email" ;
+	owl:deprecated "true"^^xsd:boolean ;
+    .
+dcmit:Image a rdfs:Class ;
+    dcam:memberOf dcterms:DCMIType ;
+    dcterms:description "Examples include images and photographs of physical objects, paintings, prints, drawings, other images and graphics, animations and moving pictures, film, diagrams, maps, musical notation.  Note that Image may include both electronic and physical representations."@en ;
+    dcterms:hasVersion <http://dublincore.org/usage/terms/history/#Image-004> ;
+    dcterms:issued "2000-07-11"^^<http://www.w3.org/2001/XMLSchema#date> ;
+    dcterms:modified "2008-01-14"^^<http://www.w3.org/2001/XMLSchema#date> ;
+    rdfs:comment "A visual representation other than text."@en ;
+    rdfs:label "Image"@en ;
+    .
+
+# ----- Masks for RDFDesktop widget -----
+# dspol:fullName is defined in modelView.rjs
+dscust:MVMask.Person a dskern:Mask ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Corpus/Kernel-Dep> ;
+	owl:deprecated "true"^^xsd:boolean ;
+    dskern:property dspol:fullName , 
+        dspol:image ;
+        .
+foaf:Person dskern:defaultMask dscust:MVMask.Person .
+
+dscust:MVMask.Person.Details a dskern:Mask ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Corpus/Kernel-Dep> ;
+	owl:deprecated "true"^^xsd:boolean ;
+    dskern:property dspol:fullName ,
+        dspol:image ,
+        dspol:firstName ,
+        dspol:lastName ,
+        dspol:email ,
+        dskern:assignment ;
+        .
+dscust:MVMask.SecurityContext a dskern:Mask ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Corpus/Kernel-Dep> ;
+	owl:deprecated "true"^^xsd:boolean ;
+    dskern:property dskern:role ,
+        dskern:organization ,
+        dskern:collabSpace ;
+        .

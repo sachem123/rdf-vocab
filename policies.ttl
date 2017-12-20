@@ -1,0 +1,263 @@
+# 12-may-2016 - jfa - corrected issues found by xturtle
+# 19-apr-2016 - kpu - remove references to dsM3/M2/M1/M0
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix dskern:    <http://www.3ds.com/RDF/Corpus/Kernel/> .
+
+@prefix package: <java:com.dassault_systemes.rdfplatform.policies.> .
+
+### rdf:type, rdfs:subClassOf & rdfs:subPropertyOf hierarchies
+
+dskern:concept a dskern:PropertyFunction.Simple ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range [ owl:unionOf (rdfs:Class rdf:Property) ] ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "concept"@en ;
+    rdfs:comment "Concept needed to describe a resource"@en ;
+    dskern:implementation package:hierarchies.concept .
+package:hierarchies.concept a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:individual a dskern:PropertyFunction.Simple ;
+    rdfs:domain rdfs:Class ;
+    rdfs:range rdfs:Resource ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "individual"@en ;
+    rdfs:comment "inverse entailment of types hierarchy"@en ;
+    dskern:implementation package:hierarchies.individual .
+package:hierarchies.individual a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:subClass a dskern:PropertyFunction.Simple ;
+    rdfs:domain rdfs:Class ;
+    rdfs:range rdfs:Class ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "subClass"@en ;
+    rdfs:comment "inverse entailment of rdfs:subClassOf"@en ;
+    dskern:implementation package:hierarchies.subClass .
+package:hierarchies.subClass a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:subProperty a dskern:PropertyFunction.Simple ;
+    rdfs:domain rdf:Property ;
+    rdfs:range rdf:Property ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "subProperty"@en ;
+    rdfs:comment "inverse entailment of rdfs:subPropertyOf"@en ;
+    dskern:implementation package:hierarchies.subProperty .
+package:hierarchies.subProperty a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:anySubPropertyOf a dskern:PropertyFunction.Param ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range rdfs:Resource ;
+    dskern:signature [ a dskern:Signature ; 
+        dskern:signatureArgs ( [ dskern:argType rdf:Property ] )
+	] ;
+    rdfs:label "anySubPropertyOf"@en ;
+    rdfs:comment "any subProperty of a provided property"@en ;
+    dskern:implementation package:hierarchies.anySubPropertyOf .
+package:hierarchies.anySubPropertyOf a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:sparse a dskern:PropertyFunction.Param ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range rdfs:Resource ;
+    dskern:signature [ a dskern:Signature ; 
+        dskern:signatureArgs ( [ dskern:argType dskern:Sparse ] )
+	] ;
+    rdfs:label "sparse"@en ;
+    rdfs:comment "the provided dskern:Sparse property, either read on the resource, its types or its super classes"@en ;
+    dskern:implementation package:hierarchies.sparse .
+package:hierarchies.sparse a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+
+### RQL discovery
+
+dskern:availableCommand a dskern:PropertyFunction.Simple ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range dskern:Function ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "available command"@en ;
+    rdfs:comment "available command for the provided resource"@en ;
+    dskern:implementation package:rql.availableCommand .
+package:rql.availableCommand a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:generateRQL a dskern:PropertyFunction.Param ;
+    rdfs:domain [ owl:unionOf ( dskern:Function dskern:Operation ) ] ;
+    rdfs:range xsd:string ;
+    dskern:signature [ a dskern:Signature ;
+        dskern:signatureArgs ( [ dskern:argType rdfs:Resource ] )
+    ], [ a dskern:Signature ] ;
+    rdfs:label "generateRQL"@en ;
+    rdfs:comment "build a well-formed RQL statement"@en ;
+    dskern:implementation package:rql.generateRQL .
+package:rql.generateRQL a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+### Security
+
+dskern:haveAccess a dskern:PropertyFunction.Param, owl:FunctionalProperty ;
+    dskern:signature [ a dskern:Signature ; 
+        dskern:signatureArgs ( [ 
+            dskern:argType xsd:string ;
+            rdfs:comment "one of [create, clone, modify, delete, read, show, connect, disconnect, revise]"@en 
+        ] )
+	] ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "haveAccess"@en ;
+    rdfs:comment "Check security with the provided mask"@en ;
+    dskern:implementation package:security.haveAccess .
+package:security.haveAccess a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:isReadable a dskern:PropertyFunction.Param.OptionalResource, owl:FunctionalProperty ;
+    rdfs:domain rdf:Property ;
+    rdfs:range xsd:boolean ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "isReadable"@en ;
+    rdfs:comment "Security read access"@en ;
+    dskern:implementation package:security.isReadable .
+package:security.isReadable a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:isWritable a dskern:PropertyFunction.Param.OptionalResource, owl:FunctionalProperty ;
+    rdfs:domain rdf:Property ;
+    rdfs:range xsd:boolean ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "isWritable"@en ;
+    rdfs:comment "Security write access"@en ;
+    dskern:implementation package:security.isWritable .
+package:security.isWritable a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+
+### Restrictions 
+# all can be used with an optional resource as argument : 
+# "restriction on property (subject) when used on resource (argument)" >
+
+dskern:isRequired a dskern:PropertyFunction.Param.OptionalResource, owl:FunctionalProperty ;
+    rdfs:domain rdf:Property ;
+    rdfs:range xsd:boolean ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "isRequired"@en ;
+    rdfs:comment "helper for dskern:minCardinality != 0"@en ;
+    dskern:implementation package:owl.restrictions.isRequired .
+package:owl.restrictions.isRequired a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:possibleValue a dskern:PropertyFunction.Param.OptionalResource ;
+    rdfs:domain rdf:Property ;
+    rdfs:range rdfs:Class ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "possibleValue"@en ;
+    rdfs:comment "infers dskern:range, dskern:rangeMemberRange, dskern:individual, dskern:someValuesFrom, dskern:hasValue, owl:TransitiveProperty, owl:ReflexiveProperty and xsd:[min/max][Inclusive/Exclusive]"@en ;
+    dskern:implementation package:owl.restrictions.possibleValue .
+package:owl.restrictions.possibleValue a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:range a dskern:PropertyFunction.Param.OptionalResource ;
+    rdfs:domain rdf:Property ;
+    rdfs:range rdfs:Class ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "range"@en ;
+    rdfs:comment "infers rdfs:range, owl:allValuesFrom and owl class description"@en ;
+    dskern:implementation package:owl.restrictions.range .
+package:owl.restrictions.range a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:cardinality a dskern:PropertyFunction.Param.OptionalResource, owl:FunctionalProperty ;
+    rdfs:domain rdf:Property ;
+    rdfs:range xsd:nonNegativeInteger ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "cardinality"@en ;
+    rdfs:comment "infers owl:cardinality"@en ;
+    dskern:implementation package:owl.restrictions.cardinality .
+package:owl.restrictions.cardinality a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:minCardinality a dskern:PropertyFunction.Param.OptionalResource, owl:FunctionalProperty ;
+    rdfs:domain rdf:Property ;
+    rdfs:range xsd:nonNegativeInteger ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "infers owl:minCardinality, owl:cardinality, owl:someValuesFrom & owl:hasValue. No binding means minCardinality > 0, but undefined"@en ;
+    dskern:implementation package:owl.restrictions.minCardinality .
+package:owl.restrictions.minCardinality a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:maxCardinality a dskern:PropertyFunction.Param.OptionalResource, owl:FunctionalProperty ;
+    rdfs:domain rdf:Property ;
+    rdfs:range xsd:nonNegativeInteger ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "maxCardinality"@en ;
+    rdfs:comment "infers owl:maxCardinality, owl:cardinality and owl:FunctionalProperty"@en ;
+    dskern:implementation package:owl.restrictions.maxCardinality .
+package:owl.restrictions.maxCardinality a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:allValuesFrom a dskern:PropertyFunction.Param.OptionalResource ;
+    rdfs:domain rdf:Property ;
+    rdfs:range rdfs:Class ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "allValuesFrom"@en ;
+    rdfs:comment "infers owl:allValuesFrom and owl class description"@en ;
+    dskern:implementation package:owl.restrictions.allValuesFrom .
+package:owl.restrictions.allValuesFrom a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:someValuesFrom a dskern:PropertyFunction.Param.OptionalResource ;
+    rdfs:domain rdf:Property ;
+    rdfs:range rdfs:Class ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "someValuesFrom"@en ;
+    rdfs:comment "infers owl:someValuesFrom and owl class description"@en ;
+    dskern:implementation package:owl.restrictions.someValuesFrom .
+package:owl.restrictions.someValuesFrom a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:hasValue a dskern:PropertyFunction.Param.OptionalResource ; 
+    rdfs:domain rdf:Property ;
+    rdfs:range rdfs:Resource ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "hasValue"@en ;
+    rdfs:comment "infers owl:hasValue and owl:oneOf"@en ;
+    dskern:implementation package:owl.restrictions.hasValue .
+package:owl.restrictions.hasValue a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+
+### Change log
+
+dskern:logItem a dskern:PropertyFunction.Param ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range dskern:Operation ;
+    dskern:signature [ a dskern:Signature ; 
+        dskern:signatureArgs ( [ dskern:argType xsd:dateTime ] )
+	] ;
+    rdfs:label "logItem"@en ;
+    rdfs:comment "log item assocated to a resource, possibly filtered by a start date"@en ;
+    dskern:implementation package:logItem .
+package:logItem a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+
+### bnodes ID : TODO Replace if provide a custom impl is not needed
+#@prefix apf: <http://jena.hpl.hp.com/ARQ/property#> .
+##apf:blankNode or apf:bnode
+#dskern:getBlankId dskern:implementation <java:org.apache.jena.sparql.pfunction.library.blankNode>
+
+dskern:getBlankId a dskern:PropertyFunction.Simple, owl:FunctionalProperty ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:string ;
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label  "getBlankId"@en ;
+    dskern:implementation package:getBlankId .
+package:getBlankId a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .

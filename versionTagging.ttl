@@ -1,0 +1,80 @@
+# policy for version tagging
+# 09-dec-2016 - jfa created
+
+# RDF Related
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+
+# Names spaces for the Corpus
+@prefix dspol:    <http://www.3ds.com/RDF/Corpus/Policy/> .
+@prefix dskern:   <http://www.3ds.com/RDF/Corpus/Kernel/> .
+
+@prefix package: <java:com.dassault_systemes.rdfplatform.policies.versionTagging.functions$> .
+#################################
+
+<http://www.3ds.com/RDF/Policy/VersionTagging> a owl:Ontology ;
+    rdfs:label "Vocabulary for the 3DEXPERIENCE PLATFORM Version Tagging Policy"@en ;
+    rdfs:comment "Dassault Systemes version tagging vocabulary, described using W3C RDF Schema and the Web Ontology Language."@en ;
+    .
+
+# properties
+
+dspol:upgrade a dskern:Attribute ;  # associated upgrade procedure
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/VersionTagging> ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range dskern:Function ;
+    .
+
+# signatures
+
+dspol:upgradeCommandSignature a dskern:Signature ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/VersionTagging> ;
+    dskern:signatureArgs ( 
+        [dskern:argType xsd:string; rdfs:label "uri"; rdfs:comment "URI of the instance to upgrade"@en ]
+    ) ;
+	dskern:signatureReturnType [
+      dskern:argType "instance-uri" ;
+      rdfs:comment "URI of the upgraded instance"@en
+    ] ;
+    .
+
+# commands
+
+dspol:VersionTaggingAdd  a  dskern:Function ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/VersionTagging> ;
+    rdfs:label  "VersionTaggingAdd()"@en;
+    dskern:implementation  package:Add ;
+    dskern:signature dskern:AddCommandSignature ;
+    .
+package:Add a dskern:Implementation ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/VersionTagging> ;
+    .
+<rdfql:UPGRADE> a rdf:Property ;
+    rdfs:subPropertyOf dskern:command ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/VersionTagging> ;
+    .
+dspol:VersionTaggingUpgrade  a  dskern:Function ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/VersionTagging> ;
+    rdfs:label  "VersionTaggingUpgrade()"@en;
+	rdfs:comment "Upgrade a resource"@en ;
+    dskern:implementation  package:Upgrade ;
+    dskern:signature dspol:upgradeCommandSignature ;
+    .
+package:Upgrade a dskern:Implementation ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/VersionTagging> ;
+    .
+
+# policy
+
+dspol:VersionTagging a dskern:Policy ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/VersionTagging> ;
+    <rdfql:ADD> dspol:VersionTaggingAdd ;
+    <rdfql:UPGRADE> dspol:VersionTaggingUpgrade ;
+    .
+
+# policy applies to all business objects
+dspol:Entity a rdfs:Class ;
+	rdfs:subClassOf dspol:VersionTagging ;
+	.

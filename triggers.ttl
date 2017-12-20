@@ -1,0 +1,145 @@
+# triggers are not a policy, but the functionality is modular
+# 26-may-2017 - jfa - trigger no longer dskern:Sparse
+# 11-jul-2016 - i2m - evaluate function when associated as object
+# 12-may-2016 - jfa - corrected issues found by xturtle
+# 19-apr-2016 - kpu - remove references to dsM3/M2/M1/M0
+# 15-apr-2016 - i2m - broken out from core-3ds
+
+# RDF Related
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+
+# Names spaces for the Corpus
+@prefix dspol:   <http://www.3ds.com/RDF/Corpus/Policy/> .
+@prefix dskern:    <http://www.3ds.com/RDF/Corpus/Kernel/> .
+@prefix dsdata:    <http://www.3ds.com/RDF/Corpus/Data/> .
+
+dskern:trigger a owl:AnnotationProperty;
+    rdfs:label "trigger"@en ;
+    rdfs:comment "a trigger registered to the prototype"@en ;
+    rdfs:domain rdfs:Class ;
+    rdfs:range dskern:TriggerFunction ;
+    .
+	
+# Ideally validation could be done using owl, but it's clunky
+# w/o rdfs:subPropertyOf support 
+	
+### Triggers
+dskern:SubjectTrigger a rdfs:Class ;
+    rdfs:label "Subject Trigger"@en ;
+    rdfs:comment "Event triggers when the referrant is a subject"@en ;
+    .	
+dskern:subjectTrigger a rdf:Property ;
+	rdfs:subPropertyOf dskern:trigger ;
+	a dskern:SubjectTrigger
+	.
+dskern:subjectTrigger.CONNECT a rdf:Property ;
+	rdfs:subPropertyOf dskern:subjectTrigger ;
+    .
+dskern:subjectTrigger.DISCONNECT a rdf:Property ;
+	rdfs:subPropertyOf dskern:subjectTrigger ;
+    .
+dskern:subjectTrigger.MODIFY a rdf:Property ;
+	rdfs:subPropertyOf dskern:subjectTrigger ;
+    .
+
+dskern:PredicateTrigger a rdfs:Class ;
+    rdfs:label "Subject Trigger"@en ;
+    rdfs:comment "Event triggers when the referrant is a predicate"@en ;
+    .	
+dskern:predicateTrigger a rdf:Property ;
+	rdfs:subPropertyOf dskern:trigger ;
+	a dskern:PredicateTrigger 
+	.
+dskern:predicateTrigger.CONNECT a rdf:Property ;
+	rdfs:subPropertyOf dskern:predicateTrigger ;
+    .
+dskern:predicateTrigger.DISCONNECT a rdf:Property ;
+	rdfs:subPropertyOf dskern:predicateTrigger ;
+    .
+dskern:predicateTrigger.MODIFY a rdf:Property ;
+	rdfs:subPropertyOf dskern:predicateTrigger ;
+    .
+
+dskern:ObjectTrigger a rdfs:Class ;
+    rdfs:label "Subject Trigger"@en ;
+    rdfs:comment "Event triggers when the referrant is an object"@en ;
+    .
+dskern:objectTrigger a rdf:Property ;
+	rdfs:subPropertyOf dskern:trigger ;
+	a dskern:ObjectTrigger ;
+	.
+dskern:objectTrigger.CONNECT a rdf:Property ;
+	rdfs:subPropertyOf dskern:objectTrigger ;
+    .
+dskern:objectTrigger.DISCONNECT a rdf:Property ;
+	rdfs:subPropertyOf dskern:objectTrigger ;
+    .
+dskern:objectTrigger.MODIFY a rdf:Property ;
+	rdfs:subPropertyOf dskern:objectTrigger ;
+    .
+
+# Decorators for trigger functions
+# command actions on resources triggering cache update
+dskern:TriggerFunction a rdfs:Class , dskern:PredefinedProcedure ;
+    rdfs:subClassOf dskern:Function ;
+    rdfs:label "Trigger Function"@en ;
+    dskern:command.MODIFY dskern:FlushCache ;
+    dskern:command.DELETE dskern:FlushCache ;
+    dskern:objectTrigger.CONNECT dskern:FlushTriggerCache ;
+    dskern:objectTrigger.DISCONNECT dskern:FlushTriggerCache ;
+    dskern:objectTrigger.CONNECT dskern:EvaluateFunction ;
+  # When we can list the context/handler types we will fill this out
+	dskern:signature [ a dskern:Signature ] ;
+    .
+dskern:CheckTriggerFunction a rdfs:Class ;
+	rdfs:subClassOf dskern:TriggerFunction ;
+    rdfs:label "Check Trigger Function"@en ;
+    rdfs:comment "Trigger runs before the change"@en ;
+    .
+dskern:ActionTriggerFunction a rdfs:Class ;
+	rdfs:subClassOf dskern:TriggerFunction ;
+    rdfs:label "Action Trigger Function"@en ;
+    rdfs:comment "Trigger runs after the change"@en ;
+    .
+dskern:DeferredTriggerFunction a rdfs:Class ;
+	rdfs:subClassOf dskern:TriggerFunction ;
+    rdfs:label "Deferred Trigger Function"@en ;
+    rdfs:comment "Trigger runs after outer transaction commit"@en ;
+    .
+	
+# Use a trigger to clear cache when triggers are juggled in the schema
+dskern:FlushTriggerCache a dskern:ActionTriggerFunction ; 
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "FlushTriggerCache";
+    dskern:implementation    <java:com.dassault_systemes.rdfplatform.trigger.Functions$ResetTriggerCache> ;
+	.
+<java:com.dassault_systemes.rdfplatform.trigger.Functions$ResetTriggerCache> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+dskern:EvaluateFunction a dskern:CheckTriggerFunction ; 
+    dskern:signature [ a dskern:Signature ] ;
+    rdfs:label "FlushTriggerCache";
+    dskern:implementation    <java:com.dassault_systemes.rdfplatform.trigger.Functions$EvalTriggerOnConnect> ;
+	.
+<java:com.dassault_systemes.rdfplatform.trigger.Functions$EvalTriggerOnConnect> a dskern:Implementation ;
+    dskern:isDefinedBy dskern: ;
+    .
+# Command errors	
+dskern:ErrorMsg.Trigger.CheckTriggerFailed a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Check Trigger '%s' has rejected a '%s' attempt on '%s'"@en ;
+    . 
+dskern:ErrorMsg.Trigger.InvalidResource a dskern:ErrorMsg ;
+    dskern:errorType dskern:UserError ;
+    dskern:errorString "Subject and Predicate for a trigger cannot be NULL or ANY "@en ;
+    . 
+dskern:ErrorMsg.Trigger.NotATrigger a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Function %s is not typed as a Trigger function"@en ;
+    .
+dskern:ErrorMsg.Trigger.BadImplementation a dskern:ErrorMsg ;
+    dskern:errorType dskern:SystemError ;
+    dskern:errorString "Implementation of trigger function %s is undefined or invalid"@en ;
+    .

@@ -1,0 +1,108 @@
+# policy to apply cestamp
+# 16-may-2017 - i2m - creationDate,modificationDate,ceStamp are not sparse
+# 12-may-2016 - jfa - corrected issues found by xturtle
+# 19-apr-2016 - kpu - remove references to dsM3/M2/M1/M0
+# 23-mar-2016 - hny - signatures
+# 18-mar-2016 - hny - dskern:implements removal
+# 16-dec-2016 -     - add INSERTTRIPLE/DELETETRIPLE
+# 22-oct-2015 - gty created
+
+# RDF Related
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+
+# Names spaces for the Corpus
+@prefix dspol:    <http://www.3ds.com/RDF/Corpus/Policy/> .
+@prefix dskern:   <http://www.3ds.com/RDF/Corpus/Kernel/> .
+
+@prefix package: <java:com.dassault_systemes.rdfplatform.policies.modifyStamp.functions$> .
+#################################
+
+<http://www.3ds.com/RDF/Policy/ModifyStamp> a owl:Ontology ;
+    rdfs:label "Vocabulary for the 3DEXPERIENCE PLATFORM Modify Stamp Policy"@en ;
+    rdfs:comment "Dassault Systemes modify stamp vocabulary, described using W3C RDF Schema and the Web Ontology Language."@en ;
+    .
+dspol:creationDate a owl:FunctionalProperty, dskern:LocalProperty ;  # date of first object modification
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/ModifyStamp> ;
+    rdfs:domain dspol:ModifyStamp ;
+    rdfs:range xsd:dateTime .
+dspol:modificationDate a owl:FunctionalProperty, dskern:LocalProperty ;  # date of last object modification
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/ModifyStamp> ;
+    rdfs:domain dspol:ModifyStamp ;
+    rdfs:range xsd:dateTime .
+dspol:ceStamp a owl:FunctionalProperty, dskern:LocalProperty ;  # guid added when object modified
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/ModifyStamp> ;
+    rdfs:domain dspol:ModifyStamp ;
+    rdfs:range rdfs:Resource ; # 'range' an URI using the uuid: protocol
+    .
+
+# policy
+
+dspol:Required.creationDate a owl:Restriction ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/ModifyStamp> ;
+    owl:onProperty dspol:creationDate ;
+    owl:someValuesFrom xsd:dateTime ;
+    .
+dspol:Required.modificationDate a owl:Restriction ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/ModifyStamp> ;
+    owl:onProperty dspol:modificationDate ;
+    owl:someValuesFrom xsd:dateTime ;
+    .
+dspol:Required.ceStamp a owl:Restriction ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/ModifyStamp> ;
+    owl:onProperty dspol:ceStamp ;
+    owl:someValuesFrom rdfs:Resource ;
+    .
+dspol:ModifyStamp a dskern:Policy ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/ModifyStamp> ;
+    rdfs:subClassOf dspol:Required.creationDate ;  
+    rdfs:subClassOf dspol:Required.modificationDate ;  
+    rdfs:subClassOf dspol:Required.ceStamp ;
+    dskern:command.ADD    dspol:ModifyStampAdd ;
+    dskern:command.CLONE  dspol:ModifyStampAdd ;
+    dskern:command.MODIFY dspol:ModifyStampModify ;
+    dskern:command.DELETE dspol:ModifyStampDelete ;
+    dskern:command.INSERTTRIPLE dspol:ModifyStampModify ;
+    dskern:command.DELETETRIPLE dspol:ModifyStampModify ;
+    .
+# methods
+
+dspol:ModifyStampAdd  a  dskern:Function ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/ModifyStamp> ;
+    rdfs:label  "ModifyStampAdd()";
+	rdfs:comment "Add a stamped element."@en ;
+    dskern:implementation  package:Add ;
+    dskern:signature dskern:AddCommandSignature ;
+    .
+dspol:ModifyStampModify  a  dskern:Function ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/ModifyStamp> ;
+    rdfs:label  "ModifyStampModify()";
+	rdfs:comment "Modify a stamped element."@en ;
+    dskern:implementation  package:Modify ;
+    dskern:signature dskern:ModifyCommandSignature ;
+    .
+dspol:ModifyStampDelete  a  dskern:Function ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/ModifyStamp> ;
+    rdfs:label  "ModifyStampDelete()";
+	rdfs:comment "Delete a stamped element."@en ;
+    dskern:implementation  package:Delete ;
+    dskern:signature dskern:DeleteCommandSignature ;
+    .
+package:Add a dskern:Implementation ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/ModifyStamp> ;
+    .
+package:Modify a dskern:Implementation ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/ModifyStamp> ;
+    .
+package:Delete a dskern:Implementation ;
+    dskern:isDefinedBy <http://www.3ds.com/RDF/Policy/ModifyStamp> ;
+    .
+
+# policy applies to all business objects
+dspol:Entity a rdfs:Class ;
+	rdfs:subClassOf dspol:ModifyStamp ;
+	.
+dskern:Entity a rdfs:Class ;
+	rdfs:subClassOf dspol:ModifyStamp ;
+	.
